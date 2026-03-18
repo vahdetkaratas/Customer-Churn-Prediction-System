@@ -5,8 +5,9 @@
 ## Monorepo (recommended)
 
 1. Push the whole project to GitHub.
-2. Vercel → import repo → **Root Directory:** `vercel_demo`.
-3. Install: `pip install -r requirements.txt` (default). First deploy can take a few minutes; cold starts add latency — `vercel.json` sets **60s** `maxDuration` (Pro).
+2. Vercel → import repo → **Project name:** must be **all lowercase** (e.g. `customer-churn-demo` or `churn-demo`). If the GitHub repo name uses capitals, edit Vercel’s suggested name — otherwise you get a “must be lowercase” error.
+3. **Root Directory:** `vercel_demo` (lowercase folder name).
+4. Install: `pip install -r requirements.txt` (default). First deploy can take a few minutes; cold starts add latency — `vercel.json` sets **60s** `maxDuration` (Pro).
 
 After each train, copy:
 

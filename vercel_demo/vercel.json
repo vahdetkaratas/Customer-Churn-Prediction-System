@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "name": "customer-churn-demo",
   "functions": {
     "app.py": {
       "maxDuration": 60
