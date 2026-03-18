@@ -7,7 +7,7 @@
 1. Push the whole project to GitHub.
 2. Vercel → import repo → **Project name:** must be **all lowercase** (e.g. `customer-churn-demo` or `churn-demo`). If the GitHub repo name uses capitals, edit Vercel’s suggested name — otherwise you get a “must be lowercase” error.
 3. **Root Directory:** `vercel_demo` (lowercase folder name).
-4. Install: `pip install -r requirements.txt` (default). First deploy can take a few minutes; cold starts add latency — `vercel.json` sets **60s** `maxDuration` (Pro).
+4. Install: `pip install -r requirements.txt` (default). First deploy can take a few minutes. If requests time out on cold start, increase **Functions → Max Duration** in the Vercel project settings (e.g. 60s on Pro).
 
 After each train, copy:
 
@@ -42,7 +42,7 @@ Copy everything inside `vercel_demo/` to a new repo root, add `model/churn_model
 | 503 model not found | Ensure `vercel_demo/model/churn_model.joblib` exists and is included in the deploy (commit or CI copy from `artifacts/` after train) |
 | Slow first request | Cold start; retry; smaller model if needed |
 | Bundle too large | Prefer LogReg or smaller ensemble (~500 MB Vercel limit) |
-| Timeout on cold start | Pro + `maxDuration` in `vercel.json` |
+| Timeout on cold start | Project **Settings → Functions** → raise max duration (Pro) |
 
 ## Endpoints
 
