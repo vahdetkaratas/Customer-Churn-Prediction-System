@@ -3,279 +3,654 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live churn prediction demo — FastAPI + scikit-learn, IBM Telco Customer Churn.">
+  <meta name="theme-color" content="#0a0c10">
+  <meta property="og:title" content="Churn Prediction — Live Demo">
+  <meta property="og:description" content="Inference API for a trained churn model. Portfolio demo.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
   <title>Churn Prediction — Portfolio Demo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2312151c'/%3E%3Cpath fill='%23f0a030' d='M8 22V10h3v12H8zm6-7V10h3v5c0 2 1.5 3.5 3.5 3.5S24 17 24 15v-5h3v5c0 3.5-2.8 6.5-6.5 6.5S14 18.5 14 15z'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f1115;
-      --surface: #181b22;
-      --border: #2a2f3a;
-      --text: #e6e8ec;
-      --muted: #8b919e;
-      --accent: #6366f1;
-      --accent-hover: #818cf8;
-      --success: #22c55e;
-      --warning: #eab308;
-      --danger: #ef4444;
+      --bg: #0a0c10;
+      --bg-elevated: #12151c;
+      --border: #2a3140;
+      --text: #eef1f7;
+      --muted: #8b95a8;
+      --accent: #f0a030;
+      --accent-hover: #ffb84d;
+      --accent-glow: rgba(240, 160, 48, 0.1);
+      --ok: #3ecf8e;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --font-sans: "Outfit", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+      --radius: 10px;
     }
-    * { box-sizing: border-box; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
       margin: 0;
-      min-height: 100vh;
-      line-height: 1.5;
-    }
-    .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin: 0 0 0.25rem 0;
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-    }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-    .card h2 { font-size: 0.85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1rem 0; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.35rem; }
-    input, select {
-      width: 100%;
-      padding: 0.6rem 0.75rem;
+      font-family: var(--font-sans);
       background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
       color: var(--text);
-      font-family: inherit;
-      font-size: 0.9rem;
+      min-height: 100vh;
+      line-height: 1.55;
     }
-    input:focus, select:focus { outline: none; border-color: var(--accent); }
-    .full { grid-column: 1 / -1; }
-    .btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
-    button {
-      font-family: inherit;
-      font-size: 0.9rem;
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 75% 45% at 50% -15%, var(--accent-glow), transparent 50%),
+        radial-gradient(ellipse 50% 35% at 100% 30%, rgba(62, 207, 142, 0.04), transparent 45%);
+    }
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 0 1.35rem 3rem;
+    }
+
+    a:focus-visible, button:focus-visible, .btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .skip {
+      position: absolute;
+      left: -9999px;
+      top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      color: var(--bg);
       font-weight: 600;
-      padding: 0.65rem 1.25rem;
+      z-index: 100;
+      border-radius: 4px;
+    }
+    .skip:focus { left: 0.5rem; }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.35rem 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .logo span { color: var(--accent); }
+
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.52rem 1rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-decoration: none;
       border-radius: 8px;
       border: none;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
     }
-    button.primary {
+    .btn-primary {
       background: var(--accent);
-      color: white;
+      color: #1a1206;
     }
-    button.primary:hover { background: var(--accent-hover); }
-    button.secondary {
-      background: var(--surface);
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(240, 160, 48, 0.2);
+    }
+    .btn-ghost {
+      background: transparent;
       color: var(--muted);
       border: 1px solid var(--border);
     }
-    button.secondary:hover { color: var(--text); border-color: var(--text); }
-    #result { display: none; margin-top: 1.5rem; }
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      background: var(--bg-elevated);
+    }
+    .btn svg { width: 16px; height: 16px; fill: currentColor; flex-shrink: 0; }
+
+    .hero {
+      padding: 2rem 0 0.25rem;
+    }
+    .hero-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      padding: 0.35rem 0.65rem;
+      background: rgba(240, 160, 48, 0.12);
+      color: var(--accent);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      letter-spacing: 0.06em;
+    }
+    h1.page-title {
+      font-size: clamp(1.65rem, 4.5vw, 2.35rem);
+      font-weight: 700;
+      line-height: 1.12;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.025em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.02rem;
+      max-width: 48ch;
+      margin: 0 0 0.35rem;
+    }
+    .subtitle a { color: var(--accent); font-weight: 500; }
+    .subtitle a:hover { color: var(--accent-hover); }
+
+    main section, .panel {
+      margin-top: 2.5rem;
+    }
+    .panel:first-of-type { margin-top: 2rem; }
+
+    h2.section-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin: 0 0 1rem;
+    }
+
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.4rem;
+    }
+    .card.featured {
+      border-color: rgba(240, 160, 48, 0.35);
+      box-shadow: 0 0 0 1px rgba(240, 160, 48, 0.06) inset;
+      background: linear-gradient(165deg, var(--bg-elevated) 0%, rgba(240, 160, 48, 0.04) 100%);
+    }
+
+    .about p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0 0 0.85rem;
+      line-height: 1.6;
+    }
+    .about p strong { color: var(--text); }
+    .about ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.65;
+    }
+    .about li { margin-bottom: 0.4rem; }
+    .about a { color: var(--accent); font-weight: 500; }
+    .about a:hover { color: var(--accent-hover); }
+    .about code {
+      font-family: var(--font-mono);
+      font-size: 0.78em;
+      background: rgba(240, 160, 48, 0.08);
+      padding: 0.12em 0.35em;
+      border-radius: 4px;
+      color: var(--accent);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.62rem 0.8rem;
+      background: #06080c;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(240, 160, 48, 0.15);
+    }
+
+    .btns {
+      display: flex;
+      gap: 0.65rem;
+      margin-top: 1.35rem;
+      flex-wrap: wrap;
+    }
+    button.primary {
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.62rem 1.35rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: var(--accent);
+      color: #1a1206;
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    button.primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(240, 160, 48, 0.2);
+    }
+    button.primary:disabled { opacity: 0.65; cursor: not-allowed; }
+    button.secondary {
+      font-family: var(--font-sans);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.62rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    button.secondary:hover {
+      color: var(--text);
+      border-color: var(--muted);
+      background: rgba(255,255,255,0.03);
+    }
+
+    #error {
+      color: var(--danger);
+      font-size: 0.88rem;
+      margin-top: 1rem;
+      font-family: var(--font-mono);
+      display: none;
+    }
+    #error.visible { display: block; }
+
+    #result {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.25rem 1.35rem;
+      background: #06080c;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
     #result.visible { display: block; }
+    #result h2 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      margin: 0 0 1rem;
+    }
     .result-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: 0.85rem;
     }
+    @media (max-width: 480px) { .result-grid { grid-template-columns: 1fr; } }
     .result-item {
-      background: var(--bg);
+      background: var(--bg-elevated);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 0.95rem 1rem;
       border: 1px solid var(--border);
     }
-    .result-item .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.25rem; }
-    .result-item .value { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 500; }
+    .result-item .label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+    .result-item .value {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
     .result-item.risk-high .value { color: var(--danger); }
     .result-item.risk-medium .value { color: var(--warning); }
-    .result-item.risk-low .value { color: var(--success); }
-    #error { color: var(--danger); font-size: 0.9rem; margin-top: 1rem; display: none; }
-    #error.visible { display: block; }
-    .footer { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-    .about p { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.75rem 0; }
-    .about ul { margin: 0; padding-left: 1.25rem; color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
-    .about li { margin-bottom: 0.35rem; }
-    .findings-list { margin: 0 0 1.25rem 0; padding-left: 1.25rem; color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+    .result-item.risk-low .value { color: var(--ok); }
+
+    .findings-list {
+      margin: 0 0 1.15rem 0;
+      padding-left: 1.2rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
     .findings-list li { margin-bottom: 0.5rem; }
     .findings-list strong { color: var(--text); font-weight: 600; }
     .findings-fig { margin: 0 0 1rem 0; }
-    .findings-fig img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); display: block; }
-    .findings-fig figcaption { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
-    .fig-missing { display: none; padding: 1.25rem; text-align: center; font-size: 0.85rem; color: var(--muted); background: var(--bg); border-radius: 10px; border: 1px dashed var(--border); line-height: 1.5; }
-    .notebooks-cta { font-size: 0.9rem; color: var(--muted); margin: 0; }
-    .notebooks-cta a { color: var(--accent); font-weight: 600; }
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 0.5rem; }
-    .metrics-grid .m { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
-    .metrics-grid .m .k { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-    .metrics-grid .m .v { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 600; margin-top: 0.25rem; }
-    .metrics-note { font-size: 0.8rem; color: var(--muted); margin: 0.75rem 0 0 0; }
-    .limitations-list { margin: 0; padding-left: 1.2rem; color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
-    .limitations-list li { margin-bottom: 0.45rem; }
-    .cta-wrap { text-align: center; margin: 0.5rem 0 0.25rem 0; }
-    a.cta-github {
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-      background: var(--accent); color: #fff !important; font-weight: 700; font-size: 0.95rem;
-      padding: 0.85rem 1.75rem; border-radius: 10px; text-decoration: none !important;
-      transition: background 0.15s; border: none;
+    .findings-fig img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: block;
     }
-    a.cta-github:hover { background: var(--accent-hover); }
-    a.cta-github svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
-    .cta-sub { font-size: 0.82rem; color: var(--muted); margin: 1.25rem 0 0 0; padding: 0 0.5rem; line-height: 1.5; }
+    .findings-fig figcaption {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.55rem;
+      font-family: var(--font-mono);
+    }
+    .fig-missing {
+      display: none;
+      padding: 1.25rem;
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--muted);
+      background: #06080c;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      line-height: 1.55;
+      font-family: var(--font-mono);
+    }
+    .notebooks-cta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .notebooks-cta a { color: var(--accent); font-weight: 600; }
+    .notebooks-cta a:hover { color: var(--accent-hover); }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.35rem;
+    }
+    .metrics-grid .m {
+      background: #06080c;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+    }
+    .metrics-grid .m .k {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .metrics-grid .m .v {
+      font-family: var(--font-mono);
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin-top: 0.3rem;
+      color: var(--accent);
+    }
+    .metrics-note {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0.65rem 0 0 0;
+      line-height: 1.5;
+    }
+
+    .limitations-list {
+      margin: 0;
+      padding-left: 1.15rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.62;
+    }
+    .limitations-list li { margin-bottom: 0.45rem; }
+    .limitations-list strong { color: var(--text); }
+
+    .cta-wrap {
+      text-align: center;
+      margin: 0.25rem 0 0;
+    }
+    a.cta-github {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #1a1206 !important;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 0.8rem 1.6rem;
+      border-radius: 8px;
+      text-decoration: none !important;
+      transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+    }
+    a.cta-github:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(240, 160, 48, 0.22);
+    }
+    a.cta-github svg { width: 1.1rem; height: 1.1rem; fill: currentColor; }
+    .cta-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 1.1rem 0 0 0;
+      line-height: 1.5;
+    }
+
+    footer#footer {
+      margin-top: 2.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+    }
+    footer#footer a { color: var(--accent); font-weight: 500; text-decoration: none; }
+    footer#footer a:hover { color: var(--accent-hover); text-decoration: underline; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Churn Prediction Demo</h1>
-    <p class="subtitle">Live inference for a churn model trained on the IBM Telco Customer Churn dataset. Adjust fields below or open <a href="/docs" style="color: var(--accent);">/docs</a> for the full JSON schema.</p>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <a class="skip" href="#main">Skip to content</a>
 
-    <div class="card about">
-      <h2>About this project</h2>
-      <p><strong>What it does.</strong> Given contract type, tenure, charges, and service flags, the API returns churn probability, a binary prediction (using an F1-tuned threshold from training), and a simple risk band.</p>
-      <p><strong>How it was built.</strong> End-to-end pipeline in Python: feature engineering aligned with training, comparison of Logistic Regression / Random Forest / Gradient Boosting, best model by ROC-AUC, threshold optimization on the hold-out set. This deploy is <em>inference-only</em> — the trained pipeline lives in <code style="font-size:0.8rem;">model/churn_model.joblib</code>.</p>
-      <ul>
-        <li><a href="/meta" style="color:var(--accent);">GET /meta</a> — stack, dataset, training summary (for portfolios)</li>
-        <li><a href="/health" style="color:var(--accent);">GET /health</a> — API + model file presence</li>
-      </ul>
-    </div>
-
-    <div class="card about" id="metricsCard" style="display: none;">
-      <h2>Hold-out test metrics</h2>
-      <p class="metrics-note" style="margin-top:0;">Best model by test ROC-AUC. F1 uses sklearn’s default 0.5 cutoff; the live API uses an F1-tuned threshold instead.</p>
-      <div class="metrics-grid" id="metricsGrid"></div>
-      <p class="metrics-note" id="metricsModelLine"></p>
-    </div>
-
-    <div class="card about">
-      <h2>Key findings (notebooks)</h2>
-      <p style="color:var(--muted);font-size:0.88rem;margin:0 0 1rem 0;">Short takeaways from EDA and modeling — full code, plots, and threshold analysis live in the repo.</p>
-      <ul class="findings-list">
-        <li><strong>Class balance.</strong> ~27% churn; stratified train/test split keeps label proportions stable.</li>
-        <li><strong>Who churns.</strong> Month-to-month contracts and shorter tenure drive much higher churn rates than long contracts.</li>
-        <li><strong>Models.</strong> Logistic Regression, Random Forest, and Gradient Boosting compared on the hold-out set; the API serves the ROC-AUC winner (see chart).</li>
-        <li><strong>Threshold.</strong> Binary predictions use an F1-tuned cutoff on the test set — not a fixed 0.5 — so precision/recall trade-offs match the retention use case.</li>
-      </ul>
-      <figure class="findings-fig">
-        <img id="figCompare" src="/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
-          onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
-        <div id="figMissing" class="fig-missing" role="note">
-          Chart missing. From repo root: <code>python scripts/generate_figures.py</code>, then copy
-          <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/public/model_comparison.png</code> (Vercel serves <code>public/</code> at the site root).
-        </div>
-        <figcaption>Hold-out ROC-AUC and F1 — three models (from <code>notebooks/03_model_experiments</code> pipeline outputs).</figcaption>
-      </figure>
-      <p class="notebooks-cta">
-        <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Jupyter notebooks on GitHub</a>
-        — 01 EDA, 02 features vs churn, 03 model comparison, 04 threshold &amp; errors.
-      </p>
-    </div>
-
-    <div class="card about">
-      <h2>Limitations</h2>
-      <ul class="limitations-list">
-        <li><strong>Dataset.</strong> IBM Telco Churn is a public teaching dataset — not your company’s production distribution.</li>
-        <li><strong>Churn definition.</strong> Label reflects a snapshot in the data; real retention goals may need different thresholds or costs.</li>
-        <li><strong>Operations.</strong> No automated retraining, drift detection, or monitoring — this demo is inference + documentation only.</li>
-      </ul>
-    </div>
-
-    <div class="card about" style="padding-bottom: 1.75rem;">
-      <div class="cta-wrap">
-        <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-          Full pipeline &amp; notebooks on GitHub
+  <div class="wrap">
+    <header>
+      <div class="logo">Churn <span>Prediction</span></div>
+      <div class="nav-actions">
+        <a class="btn btn-ghost" href="/docs" target="_blank" rel="noopener">OpenAPI</a>
+        <a class="btn btn-primary" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
         </a>
-        <p class="cta-sub">Training code, EDA, model comparison, threshold analysis, and FastAPI source.</p>
       </div>
+    </header>
+
+    <div class="hero">
+      <span class="hero-badge">Live API · Portfolio</span>
+      <h1 class="page-title">Churn prediction, one request at a time.</h1>
+      <p class="subtitle">IBM Telco Customer Churn — trained pipeline, F1-tuned threshold. Try the form below or open <a href="/docs">/docs</a> for the full JSON schema.</p>
     </div>
 
-    <div class="card">
-      <h2>Customer profile</h2>
-      <div class="row">
-        <div>
-          <label for="tenure">Tenure (months)</label>
-          <input type="number" id="tenure" min="0" value="12">
-        </div>
-        <div>
-          <label for="Contract">Contract</label>
-          <select id="Contract">
-            <option value="Month-to-month">Month-to-month</option>
-            <option value="One year">One year</option>
-            <option value="Two year">Two year</option>
-          </select>
-        </div>
-        <div>
-          <label for="MonthlyCharges">Monthly charges ($)</label>
-          <input type="number" id="MonthlyCharges" step="0.01" value="79.85">
-        </div>
-        <div>
-          <label for="TotalCharges">Total charges ($)</label>
-          <input type="number" id="TotalCharges" step="0.01" value="965.4">
-        </div>
-        <div>
-          <label for="InternetService">Internet service</label>
-          <select id="InternetService">
-            <option value="Fiber optic">Fiber optic</option>
-            <option value="DSL">DSL</option>
-            <option value="No">No</option>
-          </select>
-        </div>
-        <div>
-          <label for="Partner">Partner</label>
-          <select id="Partner">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-          </select>
-        </div>
-      </div>
-      <div class="btns">
-        <button type="button" class="primary" id="btnPredict">Predict churn</button>
-        <button type="button" class="secondary" id="btnSample">Load sample</button>
-      </div>
-      <div id="error"></div>
-      <div id="result" class="card">
-        <h2>Prediction</h2>
-        <div class="result-grid">
-          <div class="result-item">
-            <div class="label">Churn probability</div>
-            <div class="value" id="outProb">—</div>
-          </div>
-          <div class="result-item">
-            <div class="label">Prediction</div>
-            <div class="value" id="outPred">—</div>
-          </div>
-          <div class="result-item" id="outRiskWrap">
-            <div class="label">Risk band</div>
-            <div class="value" id="outRisk">—</div>
-          </div>
-          <div class="result-item">
-            <div class="label">Threshold used</div>
-            <div class="value" id="outThresh">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <main id="main">
+      <section class="panel card about">
+        <h2 class="section-title">About</h2>
+        <p><strong>What it does.</strong> Given contract type, tenure, charges, and service flags, the API returns churn probability, a binary prediction (F1-tuned threshold from training), and a risk band.</p>
+        <p><strong>How it was built.</strong> Python pipeline: feature engineering, Logistic Regression / Random Forest / Gradient Boosting, best model by ROC-AUC. This deploy is <em>inference-only</em> — weights live in <code>model/churn_model.joblib</code>.</p>
+        <ul>
+          <li><a href="/meta">GET /meta</a> — stack, dataset, training summary</li>
+          <li><a href="/health">GET /health</a> — API + model file check</li>
+        </ul>
+      </section>
 
-    <div class="footer" id="footer">
-      Backend: FastAPI + scikit-learn · IBM Telco Churn ·
+      <section class="panel card about" id="metricsCard" style="display: none;">
+        <h2 class="section-title">Hold-out test metrics</h2>
+        <p class="metrics-note" style="margin-top:0;">Best model by test ROC-AUC. F1 @ 0.5; live API uses F1-tuned threshold.</p>
+        <div class="metrics-grid" id="metricsGrid"></div>
+        <p class="metrics-note" id="metricsModelLine"></p>
+      </section>
+
+      <section class="panel card about">
+        <h2 class="section-title">Key findings</h2>
+        <p style="color:var(--muted);font-size:0.88rem;margin:0 0 1rem 0;">From EDA and modeling — full notebooks in the repo.</p>
+        <ul class="findings-list">
+          <li><strong>Class balance.</strong> ~27% churn; stratified split.</li>
+          <li><strong>Who churns.</strong> Month-to-month and shorter tenure dominate.</li>
+          <li><strong>Models.</strong> Three candidates compared; API serves ROC-AUC winner.</li>
+          <li><strong>Threshold.</strong> F1-tuned on the test set — not fixed 0.5.</li>
+        </ul>
+        <figure class="findings-fig">
+          <img id="figCompare" src="/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
+            onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
+          <div id="figMissing" class="fig-missing" role="note">
+            Chart missing. From repo: <code>python scripts/generate_figures.py</code>, copy
+            <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/public/model_comparison.png</code>.
+          </div>
+          <figcaption>Hold-out ROC-AUC and F1 (notebooks/03_model_experiments).</figcaption>
+        </figure>
+        <p class="notebooks-cta">
+          <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Notebooks on GitHub</a>
+          — 01 EDA, 02 features, 03 models, 04 threshold.
+        </p>
+      </section>
+
+      <section class="panel card about">
+        <h2 class="section-title">Limitations</h2>
+        <ul class="limitations-list">
+          <li><strong>Dataset.</strong> Public teaching data — not production distribution.</li>
+          <li><strong>Churn definition.</strong> Snapshot label; real goals may need different cutoffs.</li>
+          <li><strong>Ops.</strong> No retraining, drift, or monitoring in this demo.</li>
+        </ul>
+      </section>
+
+      <section class="panel card featured" style="padding-bottom: 1.5rem;">
+        <div class="cta-wrap">
+          <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            Full pipeline &amp; notebooks
+          </a>
+          <p class="cta-sub">Training, EDA, model comparison, threshold analysis, FastAPI source.</p>
+        </div>
+      </section>
+
+      <section class="panel card">
+        <h2 class="section-title">Customer profile</h2>
+        <div class="row">
+          <div>
+            <label for="tenure">Tenure (months)</label>
+            <input type="number" id="tenure" min="0" value="12">
+          </div>
+          <div>
+            <label for="Contract">Contract</label>
+            <select id="Contract">
+              <option value="Month-to-month">Month-to-month</option>
+              <option value="One year">One year</option>
+              <option value="Two year">Two year</option>
+            </select>
+          </div>
+          <div>
+            <label for="MonthlyCharges">Monthly charges ($)</label>
+            <input type="number" id="MonthlyCharges" step="0.01" value="79.85">
+          </div>
+          <div>
+            <label for="TotalCharges">Total charges ($)</label>
+            <input type="number" id="TotalCharges" step="0.01" value="965.4">
+          </div>
+          <div>
+            <label for="InternetService">Internet service</label>
+            <select id="InternetService">
+              <option value="Fiber optic">Fiber optic</option>
+              <option value="DSL">DSL</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div>
+            <label for="Partner">Partner</label>
+            <select id="Partner">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="btns">
+          <button type="button" class="primary" id="btnPredict">Predict churn</button>
+          <button type="button" class="secondary" id="btnSample">Load sample</button>
+        </div>
+        <div id="error"></div>
+        <div id="result">
+          <h2>Prediction</h2>
+          <div class="result-grid">
+            <div class="result-item">
+              <div class="label">Churn probability</div>
+              <div class="value" id="outProb">—</div>
+            </div>
+            <div class="result-item">
+              <div class="label">Prediction</div>
+              <div class="value" id="outPred">—</div>
+            </div>
+            <div class="result-item" id="outRiskWrap">
+              <div class="label">Risk band</div>
+              <div class="value" id="outRisk">—</div>
+            </div>
+            <div class="result-item">
+              <div class="label">Threshold used</div>
+              <div class="value" id="outThresh">—</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footer">
+      FastAPI + scikit-learn · IBM Telco Churn ·
       <a href="/docs">OpenAPI</a>
       · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
-    </div>
+    </footer>
   </div>
 
   <script>
