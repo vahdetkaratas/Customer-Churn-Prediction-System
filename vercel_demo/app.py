@@ -21,6 +21,13 @@ _BASE = Path(__file__).resolve().parent
 
 MODEL_PATH = Path("model/churn_model.joblib")
 THRESHOLD_PATH = Path("model/threshold_summary.json")
+METRICS_JSON_PATH = Path("model/metrics.json")
+
+_MODEL_LABELS = {
+    "logistic_regression": "Logistic Regression",
+    "random_forest": "Random Forest",
+    "gradient_boosting": "Gradient Boosting",
+}
 
 # Public repo (UI footer + GET /meta)
 GITHUB_REPO_URL = "https://github.com/vahdetkaratas/Customer-Churn-Prediction-System"
@@ -125,10 +132,26 @@ class ChurnResponse(BaseModel):
     threshold_used: float
 
 
+def _test_metrics_block() -> dict | None:
+    if not METRICS_JSON_PATH.exists():
+        return None
+    try:
+        raw = json.loads(METRICS_JSON_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    key = str(raw.get("model", "")).strip().lower().replace(" ", "_")
+    return {
+        "model_name": _MODEL_LABELS.get(key, raw.get("model", "selected model")),
+        "roc_auc": round(float(raw["roc_auc"]), 4),
+        "f1": round(float(raw["f1"]), 4),
+        "test_set": "Stratified 80/20 hold-out test set",
+    }
+
+
 @app.get("/meta")
 def project_meta():
     """Static description for portfolio / recruiters."""
-    return {
+    out = {
         "name": "Customer Churn Prediction (demo)",
         "dataset": "IBM Telco Customer Churn (Kaggle)",
         "stack": ["Python", "scikit-learn", "pandas", "FastAPI"],
@@ -142,6 +165,10 @@ def project_meta():
         "notebooks_url": f"{GITHUB_REPO_URL}/tree/main/notebooks",
         "docs": "/docs",
     }
+    tm = _test_metrics_block()
+    if tm:
+        out["test_metrics"] = tm
+    return out
 
 
 @app.get("/")
@@ -162,6 +189,15 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "ok", "model_configured": MODEL_PATH.exists()}
+
+
+@app.get("/model_comparison.png", include_in_schema=False)
+def model_comparison_chart():
+    """Served from public/ — explicit route for local uvicorn (Vercel also serves public/ at root)."""
+    png = _BASE / "public" / "model_comparison.png"
+    if png.is_file():
+        return FileResponse(png, media_type="image/png")
+    raise HTTPException(status_code=404, detail="Run generate_figures and copy PNG to vercel_demo/public/")
 
 
 @app.post("/predict", response_model=ChurnResponse)

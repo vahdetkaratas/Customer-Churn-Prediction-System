@@ -38,7 +38,7 @@ python scripts/generate_figures.py
 | `artifacts/models/` | `churn_model.joblib` after training (not in git) |
 | `reports/metrics/` | Training outputs (JSON/CSV) |
 | `reports/figures/` | PNGs from `generate_figures.py` (not in git) |
-| `vercel_demo/static/model_comparison.png` | Bundled for demo page |
+| `vercel_demo/public/model_comparison.png` | Demo chart (Vercel `public/` → site root) |
 | `notebooks/` | EDA → errors (01–04) |
 | `data/raw/` | Place CSV locally (gitignored) |
 | `config/config.yaml` | Paths, split, default threshold |

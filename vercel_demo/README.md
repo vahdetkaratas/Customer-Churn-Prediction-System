@@ -15,11 +15,12 @@ After each train, copy:
 |------------------|-----|
 | `artifacts/models/churn_model.joblib` | `vercel_demo/model/churn_model.joblib` |
 | `reports/metrics/threshold_summary.json` (optional) | `vercel_demo/model/threshold_summary.json` |
-| `reports/figures/model_comparison.png` (after `generate_figures`) | `vercel_demo/static/` — see `static/README.md` |
+| `reports/metrics/metrics.json` | `vercel_demo/model/metrics.json` (demo metrics card) |
+| `reports/figures/model_comparison.png` (after `generate_figures`) | `vercel_demo/public/model_comparison.png` — see `public/README.md` |
 
 Train: `python -m src.pipeline.training_pipeline` (or `make train`).
 
-**`GITHUB_REPO_URL`** in `app.py` points at [Customer-Churn-Prediction-System](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System); change it if you fork.
+**`GITHUB_REPO_URL`** in `app.py` powers `GET /meta`. The landing page footer GitHub link is in `static/index.html` — update both if you fork.
 
 ## Separate demo repo
 

@@ -120,6 +120,23 @@
     .fig-missing { display: none; padding: 1.25rem; text-align: center; font-size: 0.85rem; color: var(--muted); background: var(--bg); border-radius: 10px; border: 1px dashed var(--border); line-height: 1.5; }
     .notebooks-cta { font-size: 0.9rem; color: var(--muted); margin: 0; }
     .notebooks-cta a { color: var(--accent); font-weight: 600; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-top: 0.5rem; }
+    .metrics-grid .m { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem 1rem; }
+    .metrics-grid .m .k { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .metrics-grid .m .v { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 600; margin-top: 0.25rem; }
+    .metrics-note { font-size: 0.8rem; color: var(--muted); margin: 0.75rem 0 0 0; }
+    .limitations-list { margin: 0; padding-left: 1.2rem; color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+    .limitations-list li { margin-bottom: 0.45rem; }
+    .cta-wrap { text-align: center; margin: 0.5rem 0 0.25rem 0; }
+    a.cta-github {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+      background: var(--accent); color: #fff !important; font-weight: 700; font-size: 0.95rem;
+      padding: 0.85rem 1.75rem; border-radius: 10px; text-decoration: none !important;
+      transition: background 0.15s; border: none;
+    }
+    a.cta-github:hover { background: var(--accent-hover); }
+    a.cta-github svg { width: 1.15rem; height: 1.15rem; fill: currentColor; }
+    .cta-sub { font-size: 0.82rem; color: var(--muted); margin: 0.65rem 0 0 0; }
   </style>
 </head>
 <body>
@@ -137,6 +154,13 @@
       </ul>
     </div>
 
+    <div class="card about" id="metricsCard" style="display: none;">
+      <h2>Hold-out test metrics</h2>
+      <p class="metrics-note" style="margin-top:0;">Best model by test ROC-AUC. F1 uses sklearn’s default 0.5 cutoff; the live API uses an F1-tuned threshold instead.</p>
+      <div class="metrics-grid" id="metricsGrid"></div>
+      <p class="metrics-note" id="metricsModelLine"></p>
+    </div>
+
     <div class="card about">
       <h2>Key findings (notebooks)</h2>
       <p style="color:var(--muted);font-size:0.88rem;margin:0 0 1rem 0;">Short takeaways from EDA and modeling — full code, plots, and threshold analysis live in the repo.</p>
@@ -147,11 +171,11 @@
         <li><strong>Threshold.</strong> Binary predictions use an F1-tuned cutoff on the test set — not a fixed 0.5 — so precision/recall trade-offs match the retention use case.</li>
       </ul>
       <figure class="findings-fig">
-        <img id="figCompare" src="/static/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
+        <img id="figCompare" src="/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
           onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
         <div id="figMissing" class="fig-missing" role="note">
-          Chart not found. After training, run <code>python scripts/generate_figures.py</code> in the main repo, then copy
-          <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/static/model_comparison.png</code>.
+          Chart missing. From repo root: <code>python scripts/generate_figures.py</code>, then copy
+          <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/public/model_comparison.png</code> (Vercel serves <code>public/</code> at the site root).
         </div>
         <figcaption>Hold-out ROC-AUC and F1 — three models (from <code>notebooks/03_model_experiments</code> pipeline outputs).</figcaption>
       </figure>
@@ -159,6 +183,25 @@
         <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Jupyter notebooks on GitHub</a>
         — 01 EDA, 02 features vs churn, 03 model comparison, 04 threshold &amp; errors.
       </p>
+    </div>
+
+    <div class="card about">
+      <h2>Limitations</h2>
+      <ul class="limitations-list">
+        <li><strong>Dataset.</strong> IBM Telco Churn is a public teaching dataset — not your company’s production distribution.</li>
+        <li><strong>Churn definition.</strong> Label reflects a snapshot in the data; real retention goals may need different thresholds or costs.</li>
+        <li><strong>Operations.</strong> No automated retraining, drift detection, or monitoring — this demo is inference + documentation only.</li>
+      </ul>
+    </div>
+
+    <div class="card about" style="padding-bottom: 1.75rem;">
+      <div class="cta-wrap">
+        <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          Full pipeline &amp; notebooks on GitHub
+        </a>
+        <p class="cta-sub">Training code, EDA, model comparison, threshold analysis, and FastAPI source.</p>
+      </div>
     </div>
 
     <div class="card">
@@ -231,12 +274,27 @@
     <div class="footer" id="footer">
       Backend: FastAPI + scikit-learn · IBM Telco Churn ·
       <a href="/docs">OpenAPI</a>
-      <span id="ghWrap" style="display:none;"> · <a id="ghLink" href="#" target="_blank" rel="noopener">GitHub</a></span>
-      <span id="ghHint"> · Set <code>GITHUB_REPO_URL</code> in <code>app.py</code> for repo link</span>
+      · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 
   <script>
+    (function () {
+      fetch('/meta').then(function (r) { return r.ok ? r.json() : null; }).then(function (m) {
+        var t = m && m.test_metrics;
+        if (!t) return;
+        var card = document.getElementById('metricsCard');
+        var grid = document.getElementById('metricsGrid');
+        var line = document.getElementById('metricsModelLine');
+        if (!card || !grid) return;
+        grid.innerHTML =
+          '<div class="m"><div class="k">ROC-AUC</div><div class="v">' + t.roc_auc + '</div></div>' +
+          '<div class="m"><div class="k">F1 @ 0.5 cutoff</div><div class="v">' + t.f1 + '</div></div>';
+        line.textContent = 'Deployed model: ' + t.model_name + ' · ' + (t.test_set || '');
+        card.style.display = 'block';
+      }).catch(function () {});
+    })();
+
     function formatApiError(data) {
       if (!data || data.detail == null) return 'Request failed';
       const d = data.detail;
@@ -249,25 +307,6 @@
       }
       return String(d);
     }
-
-    fetch('/meta').then(function (r) { return r.ok ? r.json() : {}; }).then(function (m) {
-      var url = m && m.github;
-      var wrap = document.getElementById('ghWrap');
-      var hint = document.getElementById('ghHint');
-      var link = document.getElementById('ghLink');
-      if (url && String(url).indexOf('http') === 0) {
-        link.href = url;
-        hint.style.display = 'none';
-        wrap.style.display = 'inline';
-      } else {
-        wrap.style.display = 'none';
-        hint.style.display = 'inline';
-      }
-      var nb = document.getElementById('nbLink');
-      if (nb && m && m.notebooks_url && String(m.notebooks_url).indexOf('http') === 0) {
-        nb.href = m.notebooks_url;
-      }
-    }).catch(function () {});
 
     const defaultPayload = {
       gender: "Female", SeniorCitizen: 0, Partner: "Yes", Dependents: "No",
