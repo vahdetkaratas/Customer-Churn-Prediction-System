@@ -1,0 +1,18 @@
+random_state: 42
+
+data:
+  target_column: Churn
+  test_size: 0.2
+
+# API: classification threshold from reports/metrics/threshold_summary.json after training; else this default
+model:
+  default_threshold: 0.55
+
+paths:
+  raw_data: data/raw/telco_customer_churn.csv
+  model_output: artifacts/models/churn_model.joblib
+  metrics_output: reports/metrics/metrics.json
+  threshold_table: reports/metrics/threshold_table.csv
+  threshold_summary: reports/metrics/threshold_summary.json
+  model_comparison: reports/metrics/model_comparison.csv
+  error_analysis_detailed: reports/metrics/error_analysis_detailed.csv

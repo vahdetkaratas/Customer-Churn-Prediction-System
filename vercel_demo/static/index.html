@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Prediction — Portfolio Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1115;
+      --surface: #181b22;
+      --border: #2a2f3a;
+      --text: #e6e8ec;
+      --muted: #8b919e;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .container { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 0 0.25rem 0;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 { font-size: 0.85rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 1rem 0; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.35rem; }
+    input, select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--accent); }
+    .full { grid-column: 1 / -1; }
+    .btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    button {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.primary {
+      background: var(--accent);
+      color: white;
+    }
+    button.primary:hover { background: var(--accent-hover); }
+    button.secondary {
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    button.secondary:hover { color: var(--text); border-color: var(--text); }
+    #result { display: none; margin-top: 1.5rem; }
+    #result.visible { display: block; }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .result-item {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid var(--border);
+    }
+    .result-item .label { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+    .result-item .value { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 500; }
+    .result-item.risk-high .value { color: var(--danger); }
+    .result-item.risk-medium .value { color: var(--warning); }
+    .result-item.risk-low .value { color: var(--success); }
+    #error { color: var(--danger); font-size: 0.9rem; margin-top: 1rem; display: none; }
+    #error.visible { display: block; }
+    .footer { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    .about p { color: var(--muted); font-size: 0.9rem; margin: 0 0 0.75rem 0; }
+    .about ul { margin: 0; padding-left: 1.25rem; color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+    .about li { margin-bottom: 0.35rem; }
+    .findings-list { margin: 0 0 1.25rem 0; padding-left: 1.25rem; color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+    .findings-list li { margin-bottom: 0.5rem; }
+    .findings-list strong { color: var(--text); font-weight: 600; }
+    .findings-fig { margin: 0 0 1rem 0; }
+    .findings-fig img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); display: block; }
+    .findings-fig figcaption { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+    .fig-missing { display: none; padding: 1.25rem; text-align: center; font-size: 0.85rem; color: var(--muted); background: var(--bg); border-radius: 10px; border: 1px dashed var(--border); line-height: 1.5; }
+    .notebooks-cta { font-size: 0.9rem; color: var(--muted); margin: 0; }
+    .notebooks-cta a { color: var(--accent); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Churn Prediction Demo</h1>
+    <p class="subtitle">Live inference for a churn model trained on the IBM Telco Customer Churn dataset. Adjust fields below or open <a href="/docs" style="color: var(--accent);">/docs</a> for the full JSON schema.</p>
+
+    <div class="card about">
+      <h2>About this project</h2>
+      <p><strong>What it does.</strong> Given contract type, tenure, charges, and service flags, the API returns churn probability, a binary prediction (using an F1-tuned threshold from training), and a simple risk band.</p>
+      <p><strong>How it was built.</strong> End-to-end pipeline in Python: feature engineering aligned with training, comparison of Logistic Regression / Random Forest / Gradient Boosting, best model by ROC-AUC, threshold optimization on the hold-out set. This deploy is <em>inference-only</em> — the trained pipeline lives in <code style="font-size:0.8rem;">model/churn_model.joblib</code>.</p>
+      <ul>
+        <li><a href="/meta" style="color:var(--accent);">GET /meta</a> — stack, dataset, training summary (for portfolios)</li>
+        <li><a href="/health" style="color:var(--accent);">GET /health</a> — API + model file presence</li>
+      </ul>
+    </div>
+
+    <div class="card about">
+      <h2>Key findings (notebooks)</h2>
+      <p style="color:var(--muted);font-size:0.88rem;margin:0 0 1rem 0;">Short takeaways from EDA and modeling — full code, plots, and threshold analysis live in the repo.</p>
+      <ul class="findings-list">
+        <li><strong>Class balance.</strong> ~27% churn; stratified train/test split keeps label proportions stable.</li>
+        <li><strong>Who churns.</strong> Month-to-month contracts and shorter tenure drive much higher churn rates than long contracts.</li>
+        <li><strong>Models.</strong> Logistic Regression, Random Forest, and Gradient Boosting compared on the hold-out set; the API serves the ROC-AUC winner (see chart).</li>
+        <li><strong>Threshold.</strong> Binary predictions use an F1-tuned cutoff on the test set — not a fixed 0.5 — so precision/recall trade-offs match the retention use case.</li>
+      </ul>
+      <figure class="findings-fig">
+        <img id="figCompare" src="/static/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
+          onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
+        <div id="figMissing" class="fig-missing" role="note">
+          Chart not found. After training, run <code>python scripts/generate_figures.py</code> in the main repo, then copy
+          <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/static/model_comparison.png</code>.
+        </div>
+        <figcaption>Hold-out ROC-AUC and F1 — three models (from <code>notebooks/03_model_experiments</code> pipeline outputs).</figcaption>
+      </figure>
+      <p class="notebooks-cta">
+        <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Jupyter notebooks on GitHub</a>
+        — 01 EDA, 02 features vs churn, 03 model comparison, 04 threshold &amp; errors.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Customer profile</h2>
+      <div class="row">
+        <div>
+          <label for="tenure">Tenure (months)</label>
+          <input type="number" id="tenure" min="0" value="12">
+        </div>
+        <div>
+          <label for="Contract">Contract</label>
+          <select id="Contract">
+            <option value="Month-to-month">Month-to-month</option>
+            <option value="One year">One year</option>
+            <option value="Two year">Two year</option>
+          </select>
+        </div>
+        <div>
+          <label for="MonthlyCharges">Monthly charges ($)</label>
+          <input type="number" id="MonthlyCharges" step="0.01" value="79.85">
+        </div>
+        <div>
+          <label for="TotalCharges">Total charges ($)</label>
+          <input type="number" id="TotalCharges" step="0.01" value="965.4">
+        </div>
+        <div>
+          <label for="InternetService">Internet service</label>
+          <select id="InternetService">
+            <option value="Fiber optic">Fiber optic</option>
+            <option value="DSL">DSL</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+        <div>
+          <label for="Partner">Partner</label>
+          <select id="Partner">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+      </div>
+      <div class="btns">
+        <button type="button" class="primary" id="btnPredict">Predict churn</button>
+        <button type="button" class="secondary" id="btnSample">Load sample</button>
+      </div>
+      <div id="error"></div>
+      <div id="result" class="card">
+        <h2>Prediction</h2>
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="label">Churn probability</div>
+            <div class="value" id="outProb">—</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Prediction</div>
+            <div class="value" id="outPred">—</div>
+          </div>
+          <div class="result-item" id="outRiskWrap">
+            <div class="label">Risk band</div>
+            <div class="value" id="outRisk">—</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Threshold used</div>
+            <div class="value" id="outThresh">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer" id="footer">
+      Backend: FastAPI + scikit-learn · IBM Telco Churn ·
+      <a href="/docs">OpenAPI</a>
+      <span id="ghWrap" style="display:none;"> · <a id="ghLink" href="#" target="_blank" rel="noopener">GitHub</a></span>
+      <span id="ghHint"> · Set <code>GITHUB_REPO_URL</code> in <code>app.py</code> for repo link</span>
+    </div>
+  </div>
+
+  <script>
+    function formatApiError(data) {
+      if (!data || data.detail == null) return 'Request failed';
+      const d = data.detail;
+      if (typeof d === 'string') return d;
+      if (Array.isArray(d)) {
+        return d.map(function (x) {
+          if (x && typeof x.msg === 'string') return x.msg;
+          return JSON.stringify(x);
+        }).join(' · ');
+      }
+      return String(d);
+    }
+
+    fetch('/meta').then(function (r) { return r.ok ? r.json() : {}; }).then(function (m) {
+      var url = m && m.github;
+      var wrap = document.getElementById('ghWrap');
+      var hint = document.getElementById('ghHint');
+      var link = document.getElementById('ghLink');
+      if (url && String(url).indexOf('http') === 0) {
+        link.href = url;
+        hint.style.display = 'none';
+        wrap.style.display = 'inline';
+      } else {
+        wrap.style.display = 'none';
+        hint.style.display = 'inline';
+      }
+      var nb = document.getElementById('nbLink');
+      if (nb && m && m.notebooks_url && String(m.notebooks_url).indexOf('http') === 0) {
+        nb.href = m.notebooks_url;
+      }
+    }).catch(function () {});
+
+    const defaultPayload = {
+      gender: "Female", SeniorCitizen: 0, Partner: "Yes", Dependents: "No",
+      tenure: 12, PhoneService: "Yes", MultipleLines: "No", InternetService: "Fiber optic",
+      OnlineSecurity: "No", OnlineBackup: "Yes", DeviceProtection: "No", TechSupport: "No",
+      StreamingTV: "Yes", StreamingMovies: "No", Contract: "Month-to-month",
+      PaperlessBilling: "Yes", PaymentMethod: "Electronic check",
+      MonthlyCharges: 79.85, TotalCharges: 965.4
+    };
+
+    function getPayload() {
+      return {
+        ...defaultPayload,
+        tenure: parseInt(document.getElementById('tenure').value, 10) || 0,
+        Contract: document.getElementById('Contract').value,
+        MonthlyCharges: parseFloat(document.getElementById('MonthlyCharges').value) || 0,
+        TotalCharges: parseFloat(document.getElementById('TotalCharges').value) || 0,
+        InternetService: document.getElementById('InternetService').value,
+        Partner: document.getElementById('Partner').value
+      };
+    }
+
+    function setPayload(p) {
+      document.getElementById('tenure').value = p.tenure;
+      document.getElementById('Contract').value = p.Contract;
+      document.getElementById('MonthlyCharges').value = p.MonthlyCharges;
+      document.getElementById('TotalCharges').value = p.TotalCharges;
+      document.getElementById('InternetService').value = p.InternetService;
+      document.getElementById('Partner').value = p.Partner;
+    }
+
+    const resultEl = document.getElementById('result');
+    const errorEl = document.getElementById('error');
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('visible');
+      resultEl.classList.remove('visible');
+    }
+    function clearError() {
+      errorEl.textContent = '';
+      errorEl.classList.remove('visible');
+    }
+
+    document.getElementById('btnSample').addEventListener('click', function () {
+      setPayload(defaultPayload);
+      clearError();
+      resultEl.classList.remove('visible');
+    });
+
+    document.getElementById('btnPredict').addEventListener('click', async function () {
+      clearError();
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Predicting…';
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getPayload())
+        });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(formatApiError(data) || res.statusText);
+        document.getElementById('outProb').textContent = (data.churn_probability * 100).toFixed(1) + '%';
+        document.getElementById('outPred').textContent = data.prediction === 'Yes' ? 'Churn' : 'No churn';
+        document.getElementById('outRisk').textContent = data.risk_band;
+        document.getElementById('outThresh').textContent = data.threshold_used;
+        const wrap = document.getElementById('outRiskWrap');
+        wrap.className = 'result-item risk-' + data.risk_band;
+        resultEl.classList.add('visible');
+      } catch (e) {
+        showError(e.message || 'Request failed. Is the API running?');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Predict churn';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+.venv/
+venv/
+.env
+
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+*.egg-info/
+dist/
+build/
+
+# Kaggle CSV — download to data/raw/ locally (see README)
+data/raw/*.csv
+
+# Trained pipeline (large) — run training after clone
+artifacts/models/*.joblib
+
+# Figure outputs — regenerate with scripts/generate_figures.py
+reports/figures/*.png
