@@ -1,0 +1,9 @@
+# Run API after training locally (joblib + threshold on host).
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./artifacts/models:/app/artifacts/models:ro
+      - ./reports/metrics:/app/reports/metrics:ro
