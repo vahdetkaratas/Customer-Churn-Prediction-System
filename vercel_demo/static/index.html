@@ -305,7 +305,8 @@
           if (!href || href.length < 2) return;
           e.preventDefault();
           if (href === '#main') {
-            if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (mainEl) mainEl.focus({ preventScroll: true });
             return;
           }
           var el = document.querySelector(href);
