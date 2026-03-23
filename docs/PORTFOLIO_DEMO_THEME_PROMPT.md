@@ -2,7 +2,7 @@
 
 Use this document when asking an AI to build a **standalone demo landing** (static HTML, FastAPI-served HTML, or similar) that **visually matches** the main site **vahdetkaratas.com** (Arter-based Next.js theme). Goal: same **colors, typography, left “info bar” structure, and content-area card patterns** as the main layout.
 
-**Reference implementation in this repo:** `vercel_demo/static/index.html` (churn demo) — left rail + main column; full shell (outer padding, 1440px card, right menu rail) follows the layout section below.
+**Reference implementation in this repo:** `vercel_demo/static/index.html` (churn demo) — built on **`layout-shell/`** (same DOM/CSS as the transcribed theme: info bar, `#scrollbar2`, `#main.shell-scroll`, 80px rail + home SVG). Component styles: `churn-demo.css`. See `docs/MENU_RAIL_INNER_SCROLL_TEMPLATE.md`.
 
 **Source of truth on the main site repo (for humans verifying the prompt):**
 

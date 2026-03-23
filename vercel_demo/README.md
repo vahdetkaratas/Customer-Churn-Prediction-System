@@ -20,7 +20,7 @@ After each train, copy:
 
 Train: `python -m src.pipeline.training_pipeline` (or `make train`).
 
-**`GITHUB_REPO_URL`** in `app.py` powers `GET /meta`. The landing page footer GitHub link is in `static/index.html` — update both if you fork.
+**`GITHUB_REPO_URL`** in `app.py` powers `GET /meta`. The landing page lives in `static/index.html` and loads **`/static/layout-shell.css`** (same rules as repo root `layout-shell/`) plus **`/static/churn-demo.css`** for cards/form/metrics. Update footer links in `index.html` if you fork.
 
 ## Separate demo repo
 

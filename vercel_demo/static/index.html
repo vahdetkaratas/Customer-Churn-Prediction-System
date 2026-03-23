@@ -13,1129 +13,304 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231e1e28'/%3E%3Cpath fill='%23FFC107' d='M8 22V10h3v12H8zm6-7V10h3v5c0 2 1.5 3.5 3.5 3.5S24 17 24 15v-5h3v5c0 3.5-2.8 6.5-6.5 6.5S14 18.5 14 15z'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <style>
-    :root {
-      --accent: #FFC107;
-      --accent-hover: #e0ac06;
-      --deep: rgb(25, 25, 35);
-      --content: rgb(30, 30, 40);
-      --info-bar-1: rgb(32, 32, 42);
-      --info-bar-2: linear-gradient(159deg, rgb(37, 37, 50) 0%, rgb(35, 35, 45) 100%);
-      --card-gradient: linear-gradient(159deg, rgb(45, 45, 58) 0%, rgb(43, 43, 53) 100%);
-      --input-bg: rgb(25, 25, 35);
-      --text-primary: rgb(250, 250, 252);
-      --text-secondary: rgb(140, 140, 142);
-      --text-muted: rgb(100, 100, 102);
-      --border-hairline: rgba(255, 255, 255, 0.08);
-      --shadow-1: 0 3px 8px 0 rgba(15, 15, 20, 0.2);
-      --shadow-sm: 0 1px 4px 0 rgba(15, 15, 20, 0.1);
-      --success: #4CAF50;
-      --warning: #FFC107;
-      --danger: #f44336;
-      --btn-text-on-accent: #1a1a1a;
-      --font-body: "Poppins", system-ui, sans-serif;
-      --font-mono: "Courier Prime", ui-monospace, monospace;
-      --radius-card: 4px;
-      --tr-md: 0.4s ease-in-out;
-      --neon: 0 0 3px rgba(250, 250, 252, 0.4);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-    html { height: 100%; scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-height: 100%;
-      font-family: var(--font-body);
-      background: var(--deep);
-      color: var(--text-primary);
-      line-height: 1.5;
-      overflow-x: hidden;
-    }
-
-    /* Match main site: hide scrollbar visuals (scroll still works) */
-    .art-app * {
-      scrollbar-width: none;
-    }
-    .art-app *::-webkit-scrollbar {
-      display: none;
-    }
-
-    a:focus-visible, button:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-    }
-
-    .skip-link {
-      position: absolute;
-      left: -9999px;
-      top: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: var(--accent);
-      color: var(--btn-text-on-accent);
-      font-weight: 600;
-      z-index: 9999;
-      border-radius: 4px;
-    }
-    .skip-link:focus { left: 0.5rem; }
-
-    /* Layer 0 */
-    .art-app {
-      padding: 15px;
-      min-height: 100vh;
-      background: var(--deep);
-      overflow-x: hidden;
-    }
-
-    /* Layer 1 */
-    .art-app-wrapper {
-      max-width: 1440px;
-      margin: 0 auto;
-      width: 100%;
-      background: var(--content);
-      box-shadow: var(--shadow-1);
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* Layer 2 */
-    .art-app-container {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: stretch;
-      min-height: calc(100vh - 30px);
-      position: relative;
-    }
-
-    @media (min-width: 921px) {
-      .art-app-container::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 80px;
-        width: 24px;
-        pointer-events: none;
-        background: linear-gradient(90deg, transparent, rgba(25, 25, 35, 0.12));
-        z-index: 5;
-      }
-    }
-
-    /* Column A — info bar */
-    .art-info-bar {
-      width: 290px;
-      min-width: 290px;
-      background: var(--info-bar-1);
-      min-height: calc(100vh - 30px);
-      box-shadow: var(--shadow-1);
-      display: flex;
-      flex-direction: column;
-      z-index: 2;
-      flex-shrink: 0;
-    }
-
-    .ib-header {
-      background: var(--info-bar-2);
-      padding: 1.5rem 1.25rem 1.35rem;
-      text-align: center;
-    }
-
-    .ib-avatar-wrap {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 1rem;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid var(--border-hairline);
-      background: var(--input-bg);
-    }
-    .ib-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .ib-avatar-fallback {
-      width: 100%;
-      height: 100%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1.75rem;
-      color: var(--accent);
-    }
-    .ib-avatar-wrap.fallback .ib-avatar-fallback { display: flex; }
-    .ib-avatar-wrap.fallback img { display: none; }
-
-    .ib-name {
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin: 0 0 0.35rem;
-    }
-    .ib-name a {
-      color: var(--text-primary);
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .ib-name a:hover { color: var(--accent); }
-
-    .ib-role { font-size: 0.82rem; color: var(--text-secondary); margin: 0 0 0.25rem; }
-    .ib-avail { font-size: 0.78rem; color: var(--text-muted); margin: 0 0 0.75rem; }
-
-    .ib-main-site {
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-    .ib-main-site a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .ib-main-site a:hover { text-decoration: underline; color: var(--accent-hover); }
-
-    .ib-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.25rem 1.25rem 1rem;
-    }
-
-    .ib-location {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin: 0 0 1rem;
-    }
-    .ib-location strong { color: var(--text-primary); font-weight: 600; }
-
-    .ib-divider {
-      height: 1px;
-      background: var(--border-hairline);
-      margin: 0 0 1rem;
-    }
-
-    .ib-section-title {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-secondary);
-      margin: 0 0 0.65rem;
-    }
-
-    .ib-list {
-      list-style: none;
-      margin: 0 0 1.15rem;
-      padding: 0;
-      font-size: 0.84rem;
-      color: var(--text-secondary);
-    }
-    .ib-list li {
-      position: relative;
-      padding-left: 1rem;
-      margin-bottom: 0.45rem;
-      line-height: 1.5;
-    }
-    .ib-list li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.55em;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--accent);
-    }
-    .ib-list a { color: var(--accent); font-weight: 600; text-decoration: none; }
-    .ib-list a:hover { text-decoration: underline; color: var(--accent-hover); }
-
-    .ib-demo-note {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-      margin: 0 0 1rem;
-    }
-
-    .ib-social {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      padding: 1rem 1.25rem;
-      border-top: 1px solid var(--border-hairline);
-      margin-top: auto;
-    }
-    .ib-social a {
-      color: var(--text-secondary);
-      font-size: 1.15rem;
-      transition: color 0.15s;
-    }
-    .ib-social a:hover { color: var(--accent); }
-
-    /* Column B — main (scroll only inside #scrollbar) */
-    .art-content {
-      position: relative;
-      flex: 1 1 auto;
-      min-width: 0;
-      background: var(--content);
-      height: calc(100vh - 30px);
-      overflow: hidden;
-      padding-right: 80px;
-      transition: transform 0.2s ease-out;
-    }
-
-    .art-content.art-active {
-      transform: translateX(-150px);
-    }
-
-    .art-content > #scrollbar.art-scroll-frame {
-      width: 100%;
-      max-width: 100%;
-      height: calc(100vh - 30px);
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .scroll-inner {
-      padding: 2rem 1.5rem 3rem;
-      max-width: 100%;
-    }
-
-    .page-title {
-      font-size: 1.45rem;
-      font-weight: 700;
-      margin: 0 0 0.5rem;
-      color: var(--text-primary);
-    }
-    .page-lead {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin: 0 0 1.5rem;
-      max-width: 52ch;
-    }
-    .page-lead a {
-      color: var(--accent);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .page-lead a:hover { text-decoration: underline; color: var(--accent-hover); }
-
-    .art-card {
-      background: var(--card-gradient);
-      border: 1px solid var(--border-hairline);
-      border-radius: var(--radius-card);
-      padding: 1.5rem;
-      margin-bottom: 1.25rem;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .art-section-title {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-secondary);
-      margin: 0 0 1rem;
-    }
-
-    .about-block p {
-      color: var(--text-secondary);
-      font-size: 0.88rem;
-      margin: 0 0 0.75rem;
-      line-height: 1.6;
-    }
-    .about-block p strong { color: var(--text-primary); }
-    .about-block ul {
-      margin: 0;
-      padding-left: 1.15rem;
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-    }
-    .about-block li { margin-bottom: 0.35rem; }
-    .about-block a {
-      color: var(--accent);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .about-block a:hover { text-decoration: underline; }
-    .about-block code {
-      font-family: var(--font-mono);
-      font-size: 0.82em;
-      background: var(--input-bg);
-      padding: 0.1em 0.35em;
-      border-radius: 3px;
-      color: var(--text-primary);
-    }
-
-    .metrics-note {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin: 0 0 0.75rem;
-      line-height: 1.5;
-    }
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 0.85rem;
-    }
-    .metrics-grid .m {
-      background: var(--input-bg);
-      border: 1px solid var(--border-hairline);
-      border-radius: var(--radius-card);
-      padding: 0.85rem 1rem;
-    }
-    .metrics-grid .m .k {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .metrics-grid .m .v {
-      font-family: var(--font-mono);
-      font-size: 1rem;
-      font-weight: 700;
-      margin-top: 0.25rem;
-      color: var(--accent);
-    }
-
-    #metricsCard { display: none; }
-    #metricsCard.is-visible { display: block; }
-
-    .findings-list {
-      margin: 0 0 1rem;
-      padding-left: 1.15rem;
-      color: var(--text-secondary);
-      font-size: 0.88rem;
-      line-height: 1.6;
-    }
-    .findings-list li { margin-bottom: 0.45rem; }
-    .findings-list strong { color: var(--text-primary); }
-
-    .findings-fig { margin: 0 0 0.75rem; }
-    .findings-fig img {
-      width: 100%;
-      height: auto;
-      border-radius: var(--radius-card);
-      border: 1px solid var(--border-hairline);
-      display: block;
-    }
-    .findings-fig figcaption {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 0.45rem;
-      font-family: var(--font-mono);
-    }
-    .fig-missing {
-      display: none;
-      padding: 1.1rem;
-      text-align: center;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      background: var(--input-bg);
-      border-radius: var(--radius-card);
-      border: 1px dashed var(--border-hairline);
-      font-family: var(--font-mono);
-      line-height: 1.5;
-    }
-
-    .notebooks-cta {
-      font-size: 0.86rem;
-      color: var(--text-secondary);
-      margin: 0;
-    }
-    .notebooks-cta a { color: var(--accent); font-weight: 600; text-decoration: none; }
-    .notebooks-cta a:hover { text-decoration: underline; }
-
-    .limitations-list {
-      margin: 0;
-      padding-left: 1.1rem;
-      color: var(--text-secondary);
-      font-size: 0.86rem;
-      line-height: 1.58;
-    }
-    .limitations-list li { margin-bottom: 0.4rem; }
-    .limitations-list strong { color: var(--text-primary); }
-
-    .cta-wrap { text-align: center; margin: 0.25rem 0 0; }
-    a.cta-github {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      background: var(--accent);
-      color: var(--btn-text-on-accent) !important;
-      font-weight: 700;
-      font-size: 0.9rem;
-      padding: 0.8rem 1.5rem;
-      border-radius: var(--radius-card);
-      text-decoration: none !important;
-      transition: background 0.15s;
-    }
-    a.cta-github:hover { background: var(--accent-hover); }
-    a.cta-github svg { width: 1.05rem; height: 1.05rem; fill: currentColor; }
-    .cta-sub {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin: 1.25rem 0 0;
-      padding: 0 0.5rem;
-      line-height: 1.5;
-    }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
-
-    label {
-      display: block;
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 0.35rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.55rem 0.7rem;
-      background: var(--input-bg);
-      border: 1px solid var(--border-hairline);
-      border-radius: var(--radius-card);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .btns {
-      display: flex;
-      gap: 0.65rem;
-      margin-top: 1.2rem;
-      flex-wrap: wrap;
-    }
-    button.primary {
-      font-family: var(--font-body);
-      font-size: 0.86rem;
-      font-weight: 600;
-      padding: 0.6rem 1.25rem;
-      border-radius: var(--radius-card);
-      border: none;
-      cursor: pointer;
-      background: var(--accent);
-      color: var(--btn-text-on-accent);
-      transition: background 0.15s;
-    }
-    button.primary:hover:not(:disabled) { background: var(--accent-hover); }
-    button.primary:disabled { opacity: 0.65; cursor: not-allowed; }
-    button.secondary {
-      font-family: var(--font-body);
-      font-size: 0.86rem;
-      font-weight: 600;
-      padding: 0.6rem 1.1rem;
-      border-radius: var(--radius-card);
-      cursor: pointer;
-      background: transparent;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-hairline);
-      transition: color 0.15s, border-color 0.15s;
-    }
-    button.secondary:hover {
-      color: var(--text-primary);
-      border-color: var(--text-secondary);
-    }
-
-    #error {
-      color: var(--danger);
-      font-size: 0.84rem;
-      margin-top: 0.9rem;
-      font-family: var(--font-mono);
-      display: none;
-    }
-    #error.visible { display: block; }
-
-    #result {
-      display: none;
-      margin-top: 1.25rem;
-      padding: 1.2rem 1.25rem;
-      background: var(--input-bg);
-      border: 1px solid var(--border-hairline);
-      border-radius: var(--radius-card);
-    }
-    #result.visible { display: block; }
-    #result .art-section-title { color: var(--accent); margin-bottom: 0.85rem; }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-    }
-    @media (max-width: 480px) { .result-grid { grid-template-columns: 1fr; } }
-
-    .result-item {
-      background: var(--content);
-      border-radius: var(--radius-card);
-      padding: 0.85rem;
-      border: 1px solid var(--border-hairline);
-    }
-    .result-item .label {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 0.3rem;
-    }
-    .result-item .value {
-      font-family: var(--font-mono);
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    .result-item.risk-high .value { color: var(--danger); }
-    .result-item.risk-medium .value { color: var(--warning); }
-    .result-item.risk-low .value { color: var(--success); }
-
-    .page-footer {
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border-hairline);
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-    .page-footer a {
-      color: var(--accent);
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .page-footer a:hover { text-decoration: underline; }
-
-    /* Column C — menu rail (230px panel, 80px peek; Arter parity) */
-    .art-menu-bar-fix {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 80px;
-      pointer-events: none;
-      z-index: 99;
-    }
-    .art-menu-bar-fix .art-menu-bar {
-      pointer-events: auto;
-    }
-
-    .art-menu-bar {
-      background: var(--info-bar-1);
-      width: 230px;
-      height: calc(100vh - 30px);
-      position: absolute;
-      right: -150px;
-      top: 0;
-      bottom: 0;
-      box-shadow: var(--shadow-1);
-      transition: transform 0.2s ease-out;
-    }
-
-    .art-menu-bar::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(140, 140, 142, 0.2) 20%,
-        rgba(140, 140, 142, 0.25) 50%,
-        rgba(140, 140, 142, 0.2) 80%,
-        transparent 100%
-      );
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .art-menu-bar.art-active {
-      transform: translateX(-150px);
-    }
-
-    .art-menu-bar-frame {
-      position: relative;
-      height: 100%;
-    }
-
-    .art-menu-bar-header {
-      width: 100%;
-      height: 70px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 9;
-      box-shadow: var(--shadow-sm);
-      background: linear-gradient(159deg, rgba(37, 37, 50, 0.98) 0%, rgba(35, 35, 45, 0.98) 100%);
-      border-bottom: 1px solid rgba(140, 140, 142, 0.08);
-    }
-
-    .art-menu-bar-btn {
-      margin-top: -10px;
-      display: inline-block;
-      width: 15px;
-      height: 12px;
-      padding: 30px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font: inherit;
-      color: inherit;
-    }
-
-    .art-menu-bar-btn span,
-    .art-menu-bar-btn span::after,
-    .art-menu-bar-btn span::before {
-      content: "";
-      display: block;
-      width: 15px;
-      height: 3px;
-      border-radius: 1px;
-      background: var(--text-secondary);
-      transition: var(--tr-md);
-      backface-visibility: hidden;
-    }
-
-    .art-menu-bar-btn span {
-      position: relative;
-      margin: 5px 0 0;
-    }
-
-    .art-menu-bar-btn span::before,
-    .art-menu-bar-btn span::after {
-      position: absolute;
-    }
-    .art-menu-bar-btn span::before { top: -5px; }
-    .art-menu-bar-btn span::after { top: 5px; }
-
-    .art-menu-bar-btn:hover span,
-    .art-menu-bar-btn:hover span::before,
-    .art-menu-bar-btn:hover span::after {
-      background: var(--accent);
-    }
-
-    .art-menu-bar-btn.art-active span {
-      transform: rotate(45deg);
-    }
-    .art-menu-bar-btn.art-active span::before {
-      transform: translate(0px, 5px) rotate(-90deg);
-    }
-    .art-menu-bar-btn.art-active span::after {
-      transform: translate(0px, -5px) rotate(-90deg);
-    }
-
-    .menu-scroll {
-      position: absolute;
-      top: 70px;
-      left: 0;
-      right: 0;
-      bottom: 80px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding-top: 1rem;
-    }
-
-    .main-menu {
-      list-style: none;
-      margin: 0 0 60px;
-      padding: 0;
-    }
-
-    .menu-item a {
-      padding: 7px 30px;
-      display: inline-block;
-      width: 100%;
-      text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 1px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: 0.2s ease-out;
-    }
-
-    .menu-item a:hover {
-      color: var(--text-primary);
-      text-shadow: var(--neon);
-    }
-
-    .menu-item a.is-accent {
-      color: var(--accent);
-    }
-    .menu-item a.is-accent:hover {
-      color: var(--accent-hover);
-    }
-
-    .art-current-page {
-      position: absolute;
-      top: 200px;
-      left: -62px;
-      width: 200px;
-      transform: rotate(90deg);
-      text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 2px;
-      font-weight: 500;
-      color: var(--text-primary);
-      padding: 6px 14px;
-      background: rgba(45, 45, 58, 0.4);
-    }
-
-    .art-current-page a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .art-menu-bar.art-active .art-current-page {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity var(--tr-md);
-    }
-
-    @media (max-width: 920px) {
-      .art-app-container::after { display: none !important; }
-      .art-app-container { flex-direction: column; }
-      .art-info-bar {
-        width: 100%;
-        min-width: 100%;
-        min-height: auto;
-      }
-      .art-content {
-        padding-right: 0;
-        height: auto;
-        min-height: 0;
-        overflow: visible;
-        order: 2;
-      }
-      .art-content.art-active {
-        transform: none !important;
-      }
-      .art-content > #scrollbar.art-scroll-frame {
-        height: auto !important;
-        overflow: visible !important;
-      }
-      .art-menu-bar-fix {
-        position: relative !important;
-        width: 100% !important;
-        height: auto !important;
-        pointer-events: auto !important;
-        order: 3;
-      }
-      .art-menu-bar {
-        position: relative !important;
-        right: auto !important;
-        width: 100% !important;
-        height: auto !important;
-        transform: none !important;
-      }
-      .art-menu-bar.art-active {
-        transform: none !important;
-      }
-      .art-menu-bar-frame {
-        min-height: auto;
-      }
-      .art-menu-bar-header {
-        position: relative !important;
-        width: 100%;
-      }
-      .menu-scroll {
-        position: relative !important;
-        top: auto !important;
-        bottom: auto !important;
-        max-height: 0;
-        overflow: hidden;
-        padding-top: 0;
-        transition: max-height 0.35s ease-out;
-      }
-      .art-menu-bar.art-active .menu-scroll {
-        max-height: 320px;
-        padding-top: 0.75rem;
-        overflow-y: auto;
-      }
-      .main-menu { margin-bottom: 1rem; }
-      .art-current-page {
-        position: relative !important;
-        top: auto !important;
-        left: auto !important;
-        transform: none !important;
-        width: auto;
-        margin: 0.5rem 1rem 1rem;
-        writing-mode: horizontal-tb;
-      }
-      .art-menu-bar.art-active .art-current-page {
-        opacity: 1 !important;
-        pointer-events: auto !important;
-      }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Poppins:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="/static/layout-shell.css">
+  <link rel="stylesheet" href="/static/churn-demo.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <div class="art-app">
-    <div class="art-app-wrapper">
-      <div class="art-app-container">
-        <aside class="art-info-bar" aria-label="Profile">
-          <div class="ib-header">
-            <div class="ib-avatar-wrap" id="avatarWrap">
-              <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="" width="90" height="90"
-                onerror="this.parentElement.classList.add('fallback')">
-              <div class="ib-avatar-fallback" aria-hidden="true">VK</div>
-            </div>
-            <p class="ib-name"><a href="https://vahdetkaratas.com/">Vahdet Karataş</a></p>
-            <p class="ib-role">Data &amp; Reporting Consultant</p>
-            <p class="ib-avail">Available for 1–2 projects / month</p>
-            <p class="ib-main-site"><a href="https://vahdetkaratas.com/">← Main site</a></p>
+  <div class="shell-outer">
+    <div class="shell-card">
+      <div class="art-info-bar">
+        <div class="art-info-bar-frame">
+          <div class="art-info-bar-header">
+            <button type="button" class="art-info-bar-btn" aria-label="Toggle info" aria-expanded="false">
+              <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
           </div>
-          <div class="ib-scroll">
-            <p class="ib-location"><strong>Location:</strong> Prague, Czech Republic</p>
-            <div class="ib-divider" role="presentation"></div>
-            <p class="ib-section-title">Tools &amp; Focus Areas</p>
-            <ul class="ib-list">
-              <li>Dashboards &amp; reporting</li>
-              <li>Data cleaning &amp; analysis</li>
-              <li>Reporting workflows</li>
-              <li>Data pipelines &amp; ETL</li>
-              <li>ML training → serving patterns</li>
-            </ul>
-            <p class="ib-section-title">How I can help</p>
-            <ul class="ib-list">
-              <li>Client work: dashboards, reports, automation</li>
-              <li>Applied ML &amp; interactive apps — <a href="https://vahdetkaratas.com/">see main site</a></li>
-              <li>Data cleaning &amp; trustworthy spreadsheets</li>
-            </ul>
-            <p class="ib-section-title">Recent outcomes</p>
-            <ul class="ib-list">
-              <li>Reporting deliverables folded into recurring review cycles</li>
-              <li>Automated prep cut manual steps for repeat exports</li>
-              <li>Notebook experiments packaged as lightweight APIs for stakeholders</li>
-            </ul>
-            <div class="ib-divider" role="presentation"></div>
-            <p class="ib-demo-note">This page is a <strong>live churn prediction demo</strong> (IBM Telco public dataset). Inference API only — training lives in the GitHub repo.</p>
-          </div>
-          <div class="ib-social">
-            <a href="https://github.com/vahdetkaratas" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-            <a href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-            <a href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-          </div>
-        </aside>
 
-        <div class="art-content" id="main">
-          <div id="scrollbar" class="art-scroll-frame">
-            <div class="scroll-inner">
-          <h1 class="page-title">Churn prediction demo</h1>
-          <p class="page-lead">IBM Telco Customer Churn — trained pipeline, F1-tuned threshold at inference. Try the form below or open <a href="/docs">/docs</a> for the JSON schema.</p>
-
-          <section class="art-card about-block" id="section-about">
-            <h2 class="art-section-title">About this project</h2>
-            <p><strong>What it does.</strong> Contract, tenure, charges, and service flags → churn probability, binary label (F1-tuned threshold), and a risk band.</p>
-            <p><strong>How it was built.</strong> Python: feature engineering, LogReg / Random Forest / Gradient Boosting, best by ROC-AUC. <em>Inference-only</em> deploy — <code>model/churn_model.joblib</code>.</p>
-            <ul>
-              <li><a href="/meta">GET /meta</a> — stack &amp; training summary</li>
-              <li><a href="/health">GET /health</a> — model file check</li>
-            </ul>
-          </section>
-
-          <section class="art-card about-block" id="metricsCard">
-            <h2 class="art-section-title">Hold-out test metrics</h2>
-            <p class="metrics-note" style="margin-top:0;">Best model by test ROC-AUC. F1 @ 0.5; live API uses F1-tuned threshold.</p>
-            <div class="metrics-grid" id="metricsGrid"></div>
-            <p class="metrics-note" id="metricsModelLine"></p>
-          </section>
-
-          <section class="art-card about-block" id="section-findings">
-            <h2 class="art-section-title">Key findings</h2>
-            <p style="color:var(--text-muted);font-size:0.86rem;margin:0 0 0.85rem;">From EDA and modeling — notebooks in the repo.</p>
-            <ul class="findings-list">
-              <li><strong>Class balance.</strong> ~27% churn; stratified split.</li>
-              <li><strong>Who churns.</strong> Month-to-month and shorter tenure dominate.</li>
-              <li><strong>Models.</strong> Three compared; API serves ROC-AUC winner.</li>
-              <li><strong>Threshold.</strong> F1-tuned on the test set — not fixed 0.5.</li>
-            </ul>
-            <figure class="findings-fig">
-              <img id="figCompare" src="/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
-                onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
-              <div id="figMissing" class="fig-missing" role="note">
-                Chart missing. Run <code>python scripts/generate_figures.py</code>, copy
-                <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/public/model_comparison.png</code>.
-              </div>
-              <figcaption>Hold-out ROC-AUC and F1 (notebooks/03_model_experiments).</figcaption>
-            </figure>
-            <p class="notebooks-cta">
-              <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Notebooks on GitHub</a>
-              — 01 EDA, 02 features, 03 models, 04 threshold.
-            </p>
-          </section>
-
-          <section class="art-card about-block" id="section-limits">
-            <h2 class="art-section-title">Limitations</h2>
-            <ul class="limitations-list">
-              <li><strong>Dataset.</strong> Public teaching data — not production distribution.</li>
-              <li><strong>Churn definition.</strong> Snapshot label; real goals may need different cutoffs.</li>
-              <li><strong>Ops.</strong> No retraining, drift, or monitoring in this demo.</li>
-            </ul>
-          </section>
-
-          <section class="art-card" id="section-repo">
-            <div class="cta-wrap">
-              <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
-                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                Full pipeline &amp; notebooks
+          <div class="art-header">
+            <div class="art-avatar">
+              <a href="https://vahdetkaratas.com/img/face-1.jpg" class="art-avatar-curtain" target="_blank" rel="noopener noreferrer">
+                <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="Vahdet Karataş" width="90" height="90">
+                <i class="fas fa-expand" aria-hidden="true"></i>
               </a>
-              <p class="cta-sub">Training code, EDA, model comparison, threshold analysis, and FastAPI source.</p>
+              <div class="art-lamp-light">
+                <div class="art-available-lamp"></div>
+              </div>
             </div>
-          </section>
+            <h5 class="art-name mb-10"><a href="https://vahdetkaratas.com/">Vahdet Karataş</a></h5>
+            <div class="art-sm-text">Data &amp; Reporting Consultant</div>
+            <div class="art-sm-text art-muted mb-10">Available for 1–2 projects / month</div>
+          </div>
 
-          <section class="art-card" id="section-predict">
-            <h2 class="art-section-title">Customer profile</h2>
-            <div class="row">
-              <div>
-                <label for="tenure">Tenure (months)</label>
-                <input type="number" id="tenure" min="0" value="12">
-              </div>
-              <div>
-                <label for="Contract">Contract</label>
-                <select id="Contract">
-                  <option value="Month-to-month">Month-to-month</option>
-                  <option value="One year">One year</option>
-                  <option value="Two year">Two year</option>
-                </select>
-              </div>
-              <div>
-                <label for="MonthlyCharges">Monthly charges ($)</label>
-                <input type="number" id="MonthlyCharges" step="0.01" value="79.85">
-              </div>
-              <div>
-                <label for="TotalCharges">Total charges ($)</label>
-                <input type="number" id="TotalCharges" step="0.01" value="965.4">
-              </div>
-              <div>
-                <label for="InternetService">Internet service</label>
-                <select id="InternetService">
-                  <option value="Fiber optic">Fiber optic</option>
-                  <option value="DSL">DSL</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
-              <div>
-                <label for="Partner">Partner</label>
-                <select id="Partner">
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-              </div>
+          <div id="scrollbar2" class="art-scroll-frame">
+            <div class="art-table p-15-15">
+              <ul>
+                <li><h6>Location:</h6><span>Prague, Czech Republic</span></li>
+              </ul>
             </div>
-            <div class="btns">
-              <button type="button" class="primary" id="btnPredict">Predict churn</button>
-              <button type="button" class="secondary" id="btnSample">Load sample</button>
-            </div>
-            <div id="error"></div>
-            <div id="result">
-              <h2 class="art-section-title">Prediction</h2>
-              <div class="result-grid">
-                <div class="result-item">
-                  <div class="label">Churn probability</div>
-                  <div class="value" id="outProb">—</div>
-                </div>
-                <div class="result-item">
-                  <div class="label">Prediction</div>
-                  <div class="value" id="outPred">—</div>
-                </div>
-                <div class="result-item" id="outRiskWrap">
-                  <div class="label">Risk band</div>
-                  <div class="value" id="outRisk">—</div>
-                </div>
-                <div class="result-item">
-                  <div class="label">Threshold used</div>
-                  <div class="value" id="outThresh">—</div>
-                </div>
-              </div>
-            </div>
-          </section>
 
-          <footer class="page-footer" id="footer">
-            FastAPI + scikit-learn · IBM Telco · <a href="/docs">OpenAPI</a>
-            · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
-          </footer>
+            <div class="art-ls-divider"></div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Tools &amp; Focus Areas</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Dashboards &amp; reporting</li>
+                <li>Data cleaning &amp; analysis</li>
+                <li>Reporting workflows</li>
+                <li>Data pipelines &amp; ETL</li>
+                <li>ML training → serving patterns</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">How I can help</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Client work: dashboards, reports, automation</li>
+                <li>Applied ML &amp; interactive apps — <a href="https://vahdetkaratas.com/">see main site</a></li>
+                <li>Data cleaning &amp; trustworthy spreadsheets</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Recent outcomes</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Reporting deliverables folded into recurring review cycles</li>
+                <li>Automated prep cut manual steps for repeat exports</li>
+                <li>Notebook experiments packaged as lightweight APIs for stakeholders</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <p class="churn-demo-note">This page is a <strong>live churn prediction demo</strong> (IBM Telco public dataset). Inference API only — training lives in the GitHub repo.</p>
             </div>
           </div>
-        </div>
 
-        <div class="art-menu-bar-fix" aria-hidden="false">
-          <div class="art-menu-bar" id="menuBar" role="navigation" aria-label="Page sections">
-            <div class="art-menu-bar-frame">
-              <div class="art-menu-bar-header">
-                <button type="button" class="art-menu-bar-btn" id="menuToggle" aria-label="Toggle section menu" aria-expanded="false" aria-controls="menuNav">
-                  <span></span>
-                </button>
-              </div>
-              <div id="menuNav" class="art-scroll-frame menu-scroll">
-                <nav aria-label="Demo navigation">
-                  <ul class="main-menu">
-                    <li class="menu-item"><a class="is-accent" href="https://vahdetkaratas.com/" target="_blank" rel="noopener">Portfolio home</a></li>
-                    <li class="menu-item"><a href="#section-about">About</a></li>
-                    <li class="menu-item"><a href="#metricsCard">Metrics</a></li>
-                    <li class="menu-item"><a href="#section-findings">Key findings</a></li>
-                    <li class="menu-item"><a href="#section-limits">Limitations</a></li>
-                    <li class="menu-item"><a href="#section-predict">Try predict</a></li>
-                    <li class="menu-item"><a href="/docs" target="_blank" rel="noopener">OpenAPI</a></li>
-                    <li class="menu-item"><a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub repo</a></li>
-                  </ul>
-                </nav>
-              </div>
-              <div class="art-current-page">
-                <a href="#main">Churn demo</a>
-              </div>
-            </div>
+          <div class="art-ls-social">
+            <a href="https://github.com/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com/in/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://www.facebook.com/vakasoft/" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fab fa-facebook-f"></i></a>
           </div>
         </div>
+      </div>
+
+      <div class="shell-main-wrap" id="shellMainWrap">
+        <div class="shell-mobile-curtain" id="shellMobileCurtain" aria-hidden="true"></div>
+        <div class="shell-main">
+          <main class="shell-scroll" id="main" tabindex="-1">
+            <div class="shell-content" id="projectContent">
+              <h1 class="page-title">Churn prediction demo</h1>
+              <p class="page-lead">IBM Telco Customer Churn — trained pipeline, F1-tuned threshold at inference. Try the form below or open <a href="/docs">/docs</a> for the JSON schema.</p>
+
+              <nav class="demo-jump-nav" aria-label="On this page">
+                <a href="#main">Top</a>
+                <a href="#section-about">About</a>
+                <a href="#metricsCard">Metrics</a>
+                <a href="#section-findings">Key findings</a>
+                <a href="#section-limits">Limitations</a>
+                <a href="#section-predict">Try predict</a>
+                <a href="/docs" target="_blank" rel="noopener">OpenAPI</a>
+                <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
+              </nav>
+
+              <section class="art-card about-block" id="section-about">
+                <h2 class="art-section-title">About this project</h2>
+                <p><strong>What it does.</strong> Contract, tenure, charges, and service flags → churn probability, binary label (F1-tuned threshold), and a risk band.</p>
+                <p><strong>How it was built.</strong> Python: feature engineering, LogReg / Random Forest / Gradient Boosting, best by ROC-AUC. <em>Inference-only</em> deploy — <code>model/churn_model.joblib</code>.</p>
+                <ul>
+                  <li><a href="/meta">GET /meta</a> — stack &amp; training summary</li>
+                  <li><a href="/health">GET /health</a> — model file check</li>
+                </ul>
+              </section>
+
+              <section class="art-card about-block" id="metricsCard">
+                <h2 class="art-section-title">Hold-out test metrics</h2>
+                <p class="metrics-note" style="margin-top:0;">Best model by test ROC-AUC. F1 @ 0.5; live API uses F1-tuned threshold.</p>
+                <div class="metrics-grid" id="metricsGrid"></div>
+                <p class="metrics-note" id="metricsModelLine"></p>
+              </section>
+
+              <section class="art-card about-block" id="section-findings">
+                <h2 class="art-section-title">Key findings</h2>
+                <p style="color:var(--text-muted);font-size:0.86rem;margin:0 0 0.85rem;">From EDA and modeling — notebooks in the repo.</p>
+                <ul class="findings-list">
+                  <li><strong>Class balance.</strong> ~27% churn; stratified split.</li>
+                  <li><strong>Who churns.</strong> Month-to-month and shorter tenure dominate.</li>
+                  <li><strong>Models.</strong> Three compared; API serves ROC-AUC winner.</li>
+                  <li><strong>Threshold.</strong> F1-tuned on the test set — not fixed 0.5.</li>
+                </ul>
+                <figure class="findings-fig">
+                  <img id="figCompare" src="/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
+                    onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
+                  <div id="figMissing" class="fig-missing" role="note">
+                    Chart missing. Run <code>python scripts/generate_figures.py</code>, copy
+                    <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/public/model_comparison.png</code>.
+                  </div>
+                  <figcaption>Hold-out ROC-AUC and F1 (notebooks/03_model_experiments).</figcaption>
+                </figure>
+                <p class="notebooks-cta">
+                  <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Notebooks on GitHub</a>
+                  — 01 EDA, 02 features, 03 models, 04 threshold.
+                </p>
+              </section>
+
+              <section class="art-card about-block" id="section-limits">
+                <h2 class="art-section-title">Limitations</h2>
+                <ul class="limitations-list">
+                  <li><strong>Dataset.</strong> Public teaching data — not production distribution.</li>
+                  <li><strong>Churn definition.</strong> Snapshot label; real goals may need different cutoffs.</li>
+                  <li><strong>Ops.</strong> No retraining, drift, or monitoring in this demo.</li>
+                </ul>
+              </section>
+
+              <section class="art-card" id="section-repo">
+                <div class="cta-wrap">
+                  <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    Full pipeline &amp; notebooks
+                  </a>
+                  <p class="cta-sub">Training code, EDA, model comparison, threshold analysis, and FastAPI source.</p>
+                </div>
+              </section>
+
+              <section class="art-card" id="section-predict">
+                <h2 class="art-section-title">Customer profile</h2>
+                <div class="row">
+                  <div>
+                    <label for="tenure">Tenure (months)</label>
+                    <input type="number" id="tenure" min="0" value="12">
+                  </div>
+                  <div>
+                    <label for="Contract">Contract</label>
+                    <select id="Contract">
+                      <option value="Month-to-month">Month-to-month</option>
+                      <option value="One year">One year</option>
+                      <option value="Two year">Two year</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="MonthlyCharges">Monthly charges ($)</label>
+                    <input type="number" id="MonthlyCharges" step="0.01" value="79.85">
+                  </div>
+                  <div>
+                    <label for="TotalCharges">Total charges ($)</label>
+                    <input type="number" id="TotalCharges" step="0.01" value="965.4">
+                  </div>
+                  <div>
+                    <label for="InternetService">Internet service</label>
+                    <select id="InternetService">
+                      <option value="Fiber optic">Fiber optic</option>
+                      <option value="DSL">DSL</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="Partner">Partner</label>
+                    <select id="Partner">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="btns">
+                  <button type="button" class="primary" id="btnPredict">Predict churn</button>
+                  <button type="button" class="secondary" id="btnSample">Load sample</button>
+                </div>
+                <div id="error"></div>
+                <div id="result">
+                  <h2 class="art-section-title">Prediction</h2>
+                  <div class="result-grid">
+                    <div class="result-item">
+                      <div class="label">Churn probability</div>
+                      <div class="value" id="outProb">—</div>
+                    </div>
+                    <div class="result-item">
+                      <div class="label">Prediction</div>
+                      <div class="value" id="outPred">—</div>
+                    </div>
+                    <div class="result-item" id="outRiskWrap">
+                      <div class="label">Risk band</div>
+                      <div class="value" id="outRisk">—</div>
+                    </div>
+                    <div class="result-item">
+                      <div class="label">Threshold used</div>
+                      <div class="value" id="outThresh">—</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="container-fluid p-30-0">
+              <footer class="footer">
+                <div class="art-copy">
+                  FastAPI + scikit-learn · IBM Telco · <a href="/docs">OpenAPI</a>
+                  · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
+                </div>
+                <div class="footer-developer">Churn prediction demo · © <span id="shellYear"></span></div>
+              </footer>
+            </div>
+          </main>
+        </div>
+
+        <aside class="shell-rail" aria-label="Portfolio home">
+          <div class="shell-rail-header">
+            <a class="shell-rail-home" href="https://vahdetkaratas.com/" title="Portfolio home" aria-label="Portfolio home">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+              </svg>
+            </a>
+          </div>
+          <div class="shell-rail-spacer" aria-hidden="true"></div>
+        </aside>
       </div>
     </div>
   </div>
 
   <script>
+    document.getElementById('shellYear').textContent = new Date().getFullYear();
+
     (function () {
-      var btn = document.getElementById('menuToggle');
-      var bar = document.getElementById('menuBar');
-      var content = document.getElementById('main');
-      var scrollbar = document.getElementById('scrollbar');
-      if (btn && bar && content) {
-        btn.addEventListener('click', function () {
-          var open = bar.classList.toggle('art-active');
-          content.classList.toggle('art-active', open);
-          btn.classList.toggle('art-active', open);
-          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var btn = document.querySelector('.art-info-bar-btn');
+      var bar = document.querySelector('.art-info-bar');
+      var curtain = document.getElementById('shellMobileCurtain');
+      if (!btn || !bar) return;
+      function setOpen(open) {
+        bar.classList.toggle('art-active', open);
+        btn.classList.toggle('art-active', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (curtain) {
+          curtain.classList.toggle('is-open', open);
+          curtain.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+      }
+      btn.addEventListener('click', function () {
+        setOpen(!bar.classList.contains('art-active'));
+      });
+      if (curtain) {
+        curtain.addEventListener('click', function () {
+          setOpen(false);
         });
       }
-      function closeMenu() {
-        if (!bar || !content || !btn) return;
-        bar.classList.remove('art-active');
-        content.classList.remove('art-active');
-        btn.classList.remove('art-active');
-        btn.setAttribute('aria-expanded', 'false');
-      }
-      document.querySelectorAll('.art-menu-bar a[href^="#"]').forEach(function (a) {
+    })();
+
+    (function () {
+      var mainEl = document.getElementById('main');
+      document.querySelectorAll('.demo-jump-nav a[href^="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
           var href = a.getAttribute('href');
           if (!href || href.length < 2) return;
           e.preventDefault();
-          closeMenu();
           if (href === '#main') {
-            if (scrollbar) scrollbar.scrollTo({ top: 0, behavior: 'smooth' });
+            if (mainEl) mainEl.scrollTo({ top: 0, behavior: 'smooth' });
             return;
           }
           var el = document.querySelector(href);
           if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeMenu();
       });
     })();
 
