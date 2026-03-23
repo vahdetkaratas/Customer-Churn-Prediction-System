@@ -7,6 +7,10 @@ __pycache__/
 venv/
 .env
 
+# Never commit API keys or local secrets
+api.txt
+*.key.pem
+
 .ipynb_checkpoints/
 .pytest_cache/
 .DS_Store
