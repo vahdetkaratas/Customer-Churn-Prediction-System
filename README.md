@@ -67,6 +67,7 @@ python scripts/generate_figures.py
 | [docs/SYSTEM_DESIGN.md](docs/SYSTEM_DESIGN.md) | Pipeline design |
 | [docs/IMPLEMENTATION_REFERENCE.md](docs/IMPLEMENTATION_REFERENCE.md) | Schemas, config |
 | [docs/PORTFOLIO_DEMO_THEME_PROMPT.md](docs/PORTFOLIO_DEMO_THEME_PROMPT.md) | Theme-aligned demo pages (match vahdetkaratas.com) |
+| [docs/MENU_RAIL_INNER_SCROLL_TEMPLATE.md](docs/MENU_RAIL_INNER_SCROLL_TEMPLATE.md) | Right rail + inner scroll (Arter parity) — implemented in `vercel_demo/static/index.html` |
 
 **Dataset:** [Telco Customer Churn (Kaggle)](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
 

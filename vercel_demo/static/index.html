@@ -38,6 +38,8 @@
       --font-body: "Poppins", system-ui, sans-serif;
       --font-mono: "Courier Prime", ui-monospace, monospace;
       --radius-card: 4px;
+      --tr-md: 0.4s ease-in-out;
+      --neon: 0 0 3px rgba(250, 250, 252, 0.4);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -50,6 +52,14 @@
       color: var(--text-primary);
       line-height: 1.5;
       overflow-x: hidden;
+    }
+
+    /* Match main site: hide scrollbar visuals (scroll still works) */
+    .art-app * {
+      scrollbar-width: none;
+    }
+    .art-app *::-webkit-scrollbar {
+      display: none;
     }
 
     a:focus-visible, button:focus-visible {
@@ -86,6 +96,7 @@
       background: var(--content);
       box-shadow: var(--shadow-1);
       position: relative;
+      overflow-x: hidden;
     }
 
     /* Layer 2 */
@@ -107,7 +118,7 @@
         width: 24px;
         pointer-events: none;
         background: linear-gradient(90deg, transparent, rgba(25, 25, 35, 0.12));
-        z-index: 1;
+        z-index: 5;
       }
     }
 
@@ -254,15 +265,34 @@
     }
     .ib-social a:hover { color: var(--accent); }
 
-    /* Column B — main */
+    /* Column B — main (scroll only inside #scrollbar) */
     .art-content {
+      position: relative;
       flex: 1 1 auto;
       min-width: 0;
       background: var(--content);
-      overflow-y: auto;
-      padding: 2rem 1.5rem 2rem 1.5rem;
+      height: calc(100vh - 30px);
+      overflow: hidden;
       padding-right: 80px;
-      min-height: calc(100vh - 30px);
+      transition: transform 0.2s ease-out;
+    }
+
+    .art-content.art-active {
+      transform: translateX(-150px);
+    }
+
+    .art-content > #scrollbar.art-scroll-frame {
+      width: 100%;
+      max-width: 100%;
+      height: calc(100vh - 30px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scroll-inner {
+      padding: 2rem 1.5rem 3rem;
+      max-width: 100%;
     }
 
     .page-title {
@@ -577,19 +607,32 @@
     }
     .page-footer a:hover { text-decoration: underline; }
 
-    /* Column C — menu rail */
-    .art-menu-bar {
+    /* Column C — menu rail (230px panel, 80px peek; Arter parity) */
+    .art-menu-bar-fix {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
       width: 80px;
-      min-width: 80px;
-      flex-shrink: 0;
-      background: var(--info-bar-1);
-      box-shadow: var(--shadow-1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      z-index: 2;
+      pointer-events: none;
+      z-index: 99;
     }
+    .art-menu-bar-fix .art-menu-bar {
+      pointer-events: auto;
+    }
+
+    .art-menu-bar {
+      background: var(--info-bar-1);
+      width: 230px;
+      height: calc(100vh - 30px);
+      position: absolute;
+      right: -150px;
+      top: 0;
+      bottom: 0;
+      box-shadow: var(--shadow-1);
+      transition: transform 0.2s ease-out;
+    }
+
     .art-menu-bar::before {
       content: "";
       position: absolute;
@@ -597,75 +640,237 @@
       top: 0;
       bottom: 0;
       width: 1px;
-      background: linear-gradient(180deg, transparent, rgba(255,255,255,0.06), transparent);
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(140, 140, 142, 0.2) 20%,
+        rgba(140, 140, 142, 0.25) 50%,
+        rgba(140, 140, 142, 0.2) 80%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .art-menu-bar.art-active {
+      transform: translateX(-150px);
+    }
+
+    .art-menu-bar-frame {
+      position: relative;
+      height: 100%;
     }
 
     .art-menu-bar-header {
       width: 100%;
       height: 70px;
-      min-height: 70px;
-      background: var(--info-bar-2);
       display: flex;
+      justify-content: flex-start;
       align-items: center;
-      justify-content: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 9;
+      box-shadow: var(--shadow-sm);
+      background: linear-gradient(159deg, rgba(37, 37, 50, 0.98) 0%, rgba(35, 35, 45, 0.98) 100%);
+      border-bottom: 1px solid rgba(140, 140, 142, 0.08);
     }
-    .burger-link {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      padding: 0.5rem;
-      text-decoration: none;
+
+    .art-menu-bar-btn {
+      margin-top: -10px;
+      display: inline-block;
+      width: 15px;
+      height: 12px;
+      padding: 30px;
       cursor: pointer;
+      background: none;
+      border: none;
+      font: inherit;
+      color: inherit;
     }
-    .burger-link span {
+
+    .art-menu-bar-btn span,
+    .art-menu-bar-btn span::after,
+    .art-menu-bar-btn span::before {
+      content: "";
       display: block;
-      width: 22px;
-      height: 2px;
-      background: var(--text-primary);
+      width: 15px;
+      height: 3px;
       border-radius: 1px;
+      background: var(--text-secondary);
+      transition: var(--tr-md);
+      backface-visibility: hidden;
     }
-    .burger-link:hover span { background: var(--accent); }
+
+    .art-menu-bar-btn span {
+      position: relative;
+      margin: 5px 0 0;
+    }
+
+    .art-menu-bar-btn span::before,
+    .art-menu-bar-btn span::after {
+      position: absolute;
+    }
+    .art-menu-bar-btn span::before { top: -5px; }
+    .art-menu-bar-btn span::after { top: 5px; }
+
+    .art-menu-bar-btn:hover span,
+    .art-menu-bar-btn:hover span::before,
+    .art-menu-bar-btn:hover span::after {
+      background: var(--accent);
+    }
+
+    .art-menu-bar-btn.art-active span {
+      transform: rotate(45deg);
+    }
+    .art-menu-bar-btn.art-active span::before {
+      transform: translate(0px, 5px) rotate(-90deg);
+    }
+    .art-menu-bar-btn.art-active span::after {
+      transform: translate(0px, -5px) rotate(-90deg);
+    }
+
+    .menu-scroll {
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      bottom: 80px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-top: 1rem;
+    }
+
+    .main-menu {
+      list-style: none;
+      margin: 0 0 60px;
+      padding: 0;
+    }
+
+    .menu-item a {
+      padding: 7px 30px;
+      display: inline-block;
+      width: 100%;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: 0.2s ease-out;
+    }
+
+    .menu-item a:hover {
+      color: var(--text-primary);
+      text-shadow: var(--neon);
+    }
+
+    .menu-item a.is-accent {
+      color: var(--accent);
+    }
+    .menu-item a.is-accent:hover {
+      color: var(--accent-hover);
+    }
 
     .art-current-page {
-      margin-top: auto;
-      margin-bottom: 1rem;
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      font-size: 0.62rem;
-      letter-spacing: 0.18em;
+      position: absolute;
+      top: 200px;
+      left: -62px;
+      width: 200px;
+      transform: rotate(90deg);
       text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 0.5rem 0.25rem;
-      max-height: 140px;
-      text-align: center;
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: 500;
+      color: var(--text-primary);
+      padding: 6px 14px;
+      background: rgba(45, 45, 58, 0.4);
     }
 
-    @media (max-width: 900px) {
-      .art-app-container { flex-direction: column; flex-wrap: nowrap; }
+    .art-current-page a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .art-menu-bar.art-active .art-current-page {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--tr-md);
+    }
+
+    @media (max-width: 920px) {
       .art-app-container::after { display: none !important; }
+      .art-app-container { flex-direction: column; }
       .art-info-bar {
         width: 100%;
         min-width: 100%;
         min-height: auto;
       }
       .art-content {
-        padding: 1.5rem 1.25rem;
-        min-height: auto;
+        padding-right: 0;
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        order: 2;
+      }
+      .art-content.art-active {
+        transform: none !important;
+      }
+      .art-content > #scrollbar.art-scroll-frame {
+        height: auto !important;
+        overflow: visible !important;
+      }
+      .art-menu-bar-fix {
+        position: relative !important;
+        width: 100% !important;
+        height: auto !important;
+        pointer-events: auto !important;
+        order: 3;
       }
       .art-menu-bar {
-        width: 100%;
-        min-width: 100%;
-        flex-direction: row;
-        min-height: 70px;
-        align-items: stretch;
+        position: relative !important;
+        right: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        transform: none !important;
       }
-      .art-menu-bar-header { width: 80px; min-width: 80px; height: auto; min-height: 70px; }
+      .art-menu-bar.art-active {
+        transform: none !important;
+      }
+      .art-menu-bar-frame {
+        min-height: auto;
+      }
+      .art-menu-bar-header {
+        position: relative !important;
+        width: 100%;
+      }
+      .menu-scroll {
+        position: relative !important;
+        top: auto !important;
+        bottom: auto !important;
+        max-height: 0;
+        overflow: hidden;
+        padding-top: 0;
+        transition: max-height 0.35s ease-out;
+      }
+      .art-menu-bar.art-active .menu-scroll {
+        max-height: 320px;
+        padding-top: 0.75rem;
+        overflow-y: auto;
+      }
+      .main-menu { margin-bottom: 1rem; }
       .art-current-page {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: auto;
+        margin: 0.5rem 1rem 1rem;
         writing-mode: horizontal-tb;
-        transform: none;
-        margin: auto 1rem auto auto;
-        max-height: none;
-        letter-spacing: 0.12em;
+      }
+      .art-menu-bar.art-active .art-current-page {
+        opacity: 1 !important;
+        pointer-events: auto !important;
       }
     }
   </style>
@@ -722,10 +927,12 @@
         </aside>
 
         <div class="art-content" id="main">
+          <div id="scrollbar" class="art-scroll-frame">
+            <div class="scroll-inner">
           <h1 class="page-title">Churn prediction demo</h1>
           <p class="page-lead">IBM Telco Customer Churn — trained pipeline, F1-tuned threshold at inference. Try the form below or open <a href="/docs">/docs</a> for the JSON schema.</p>
 
-          <section class="art-card about-block">
+          <section class="art-card about-block" id="section-about">
             <h2 class="art-section-title">About this project</h2>
             <p><strong>What it does.</strong> Contract, tenure, charges, and service flags → churn probability, binary label (F1-tuned threshold), and a risk band.</p>
             <p><strong>How it was built.</strong> Python: feature engineering, LogReg / Random Forest / Gradient Boosting, best by ROC-AUC. <em>Inference-only</em> deploy — <code>model/churn_model.joblib</code>.</p>
@@ -742,7 +949,7 @@
             <p class="metrics-note" id="metricsModelLine"></p>
           </section>
 
-          <section class="art-card about-block">
+          <section class="art-card about-block" id="section-findings">
             <h2 class="art-section-title">Key findings</h2>
             <p style="color:var(--text-muted);font-size:0.86rem;margin:0 0 0.85rem;">From EDA and modeling — notebooks in the repo.</p>
             <ul class="findings-list">
@@ -766,7 +973,7 @@
             </p>
           </section>
 
-          <section class="art-card about-block">
+          <section class="art-card about-block" id="section-limits">
             <h2 class="art-section-title">Limitations</h2>
             <ul class="limitations-list">
               <li><strong>Dataset.</strong> Public teaching data — not production distribution.</li>
@@ -775,7 +982,7 @@
             </ul>
           </section>
 
-          <section class="art-card">
+          <section class="art-card" id="section-repo">
             <div class="cta-wrap">
               <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -785,7 +992,7 @@
             </div>
           </section>
 
-          <section class="art-card">
+          <section class="art-card" id="section-predict">
             <h2 class="art-section-title">Customer profile</h2>
             <div class="row">
               <div>
@@ -856,21 +1063,82 @@
             FastAPI + scikit-learn · IBM Telco · <a href="/docs">OpenAPI</a>
             · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
           </footer>
+            </div>
+          </div>
         </div>
 
-        <aside class="art-menu-bar" aria-label="Site menu">
-          <div class="art-menu-bar-header">
-            <a class="burger-link" href="https://vahdetkaratas.com/" aria-label="Open main site" title="Main site">
-              <span></span><span></span><span></span>
-            </a>
+        <div class="art-menu-bar-fix" aria-hidden="false">
+          <div class="art-menu-bar" id="menuBar" role="navigation" aria-label="Page sections">
+            <div class="art-menu-bar-frame">
+              <div class="art-menu-bar-header">
+                <button type="button" class="art-menu-bar-btn" id="menuToggle" aria-label="Toggle section menu" aria-expanded="false" aria-controls="menuNav">
+                  <span></span>
+                </button>
+              </div>
+              <div id="menuNav" class="art-scroll-frame menu-scroll">
+                <nav aria-label="Demo navigation">
+                  <ul class="main-menu">
+                    <li class="menu-item"><a class="is-accent" href="https://vahdetkaratas.com/" target="_blank" rel="noopener">Portfolio home</a></li>
+                    <li class="menu-item"><a href="#section-about">About</a></li>
+                    <li class="menu-item"><a href="#metricsCard">Metrics</a></li>
+                    <li class="menu-item"><a href="#section-findings">Key findings</a></li>
+                    <li class="menu-item"><a href="#section-limits">Limitations</a></li>
+                    <li class="menu-item"><a href="#section-predict">Try predict</a></li>
+                    <li class="menu-item"><a href="/docs" target="_blank" rel="noopener">OpenAPI</a></li>
+                    <li class="menu-item"><a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub repo</a></li>
+                  </ul>
+                </nav>
+              </div>
+              <div class="art-current-page">
+                <a href="#main">Churn demo</a>
+              </div>
+            </div>
           </div>
-          <div class="art-current-page">Churn demo</div>
-        </aside>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    (function () {
+      var btn = document.getElementById('menuToggle');
+      var bar = document.getElementById('menuBar');
+      var content = document.getElementById('main');
+      var scrollbar = document.getElementById('scrollbar');
+      if (btn && bar && content) {
+        btn.addEventListener('click', function () {
+          var open = bar.classList.toggle('art-active');
+          content.classList.toggle('art-active', open);
+          btn.classList.toggle('art-active', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+      }
+      function closeMenu() {
+        if (!bar || !content || !btn) return;
+        bar.classList.remove('art-active');
+        content.classList.remove('art-active');
+        btn.classList.remove('art-active');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      document.querySelectorAll('.art-menu-bar a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var href = a.getAttribute('href');
+          if (!href || href.length < 2) return;
+          e.preventDefault();
+          closeMenu();
+          if (href === '#main') {
+            if (scrollbar) scrollbar.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          var el = document.querySelector(href);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeMenu();
+      });
+    })();
+
     (function () {
       fetch('/meta').then(function (r) { return r.ok ? r.json() : null; }).then(function (m) {
         var t = m && m.test_metrics;
