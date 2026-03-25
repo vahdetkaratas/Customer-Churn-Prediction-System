@@ -27,4 +27,4 @@ artifacts/models/*.joblib
 # Figure outputs — regenerate with scripts/generate_figures.py
 reports/figures/*.png
 layout-shell
-docs
+docs/
