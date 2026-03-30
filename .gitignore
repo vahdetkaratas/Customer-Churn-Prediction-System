@@ -27,3 +27,4 @@ data/raw/*.csv
 reports/figures/*.png
 layout-shell
 docs/
+vercel_demo
