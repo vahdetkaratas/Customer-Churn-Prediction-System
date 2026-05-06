@@ -3,7 +3,7 @@
 [![CI](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/actions/workflows/ci.yml/badge.svg)](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/actions/workflows/ci.yml)
 
 **Repository:** [Customer-Churn-Prediction-System](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System)  
-**Live demo:** [churn.vahdetkaratas.com](https://churn.vahdetkaratas.com/) (Vercel — `vercel_demo/`)
+**Live:** scoring API [churn-api.vahdetkaratas.com](https://churn-api.vahdetkaratas.com/) · OpenAPI [/docs](https://churn-api.vahdetkaratas.com/docs). Portfolio/labs framing pages are static shells (`layout-shell`, `layout-shell-commercial`) deployed separately from this repo if used.
 
 Production-style **tabular ML** pipeline: preprocessing, engineered features, LogReg / Random Forest / Gradient Boosting (best by ROC-AUC), F1-tuned threshold, error analysis, **FastAPI** + optional CLI. Stack: scikit-learn, pandas, FastAPI.
 
@@ -21,7 +21,6 @@ Raw CSV → features → train/test split → compare models → best → joblib
 - Single **joblib** pipeline (no train/serve skew on encodings).
 - **REST API** — probability, `Yes`/`No`, risk bands.
 - **pytest** — API, preprocessing, CLI, config (skips when data/model missing).
-- **Vercel demo** — inference UI + chart; see [`vercel_demo/README.md`](vercel_demo/README.md).
 
 ## Docker (API for clone users)
 
@@ -52,7 +51,7 @@ python scripts/generate_figures.py
 | `artifacts/models/` | `churn_model.joblib` after training (not in git) |
 | `reports/metrics/` | Training outputs (JSON/CSV) |
 | `reports/figures/` | PNGs from `generate_figures.py` (not in git) |
-| `vercel_demo/public/model_comparison.png` | Demo chart (Vercel `public/` → site root) |
+| `layout-shell/`, `layout-shell-commercial/` | Optional static framing pages (generated locally; gitignored by default) |
 | `notebooks/` | EDA → errors (01–04) |
 | `data/raw/` | Place CSV locally (gitignored) |
 | `config/config.yaml` | Paths, split, default threshold |
@@ -63,7 +62,7 @@ python scripts/generate_figures.py
 
 ## CI
 
-Workflow [.github/workflows/ci.yml](.github/workflows/ci.yml) runs `pytest` on Python 3.10–3.12. Contributor notes (data gitignore, Vercel copies): **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+Contributor notes (data gitignore, static deploy copies): **[CONTRIBUTING.md](CONTRIBUTING.md)**.
 
 ## License
 

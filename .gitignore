@@ -26,5 +26,6 @@ data/raw/*.csv
 # Figure outputs — regenerate with scripts/generate_figures.py
 reports/figures/*.png
 layout-shell
+layout-shell-commercial
 docs/
 vercel_demo
