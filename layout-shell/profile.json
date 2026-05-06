@@ -1,0 +1,30 @@
+{
+  "name": "Vahdettin Karatas",
+  "identity": "Applied ML engineer — tabular models, APIs, inference deployment",
+  "identitySub": "",
+  "location": "Prague, Czech Republic",
+  "portfolioUrl": "https://vahdetkaratas.com/",
+  "avatarUrl": "https://vahdetkaratas.com/img/face-1.jpg",
+  "technicalFocus": [
+    "Tabular ML pipelines",
+    "Train/serve parity with sklearn + joblib",
+    "FastAPI services and OpenAPI contracts",
+    "Docker inference packaging",
+    "Tests around preprocessing and endpoints"
+  ],
+  "reviewSectionTitle": "For hiring review",
+  "footerLabel": "Applied ML portfolio artifact",
+  "footerTagline": "Tabular ML, reproducible training, and HTTP inference APIs.",
+  "socialLinks": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/vahdetkaratas",
+      "iconClass": "fab fa-github"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/vahdetkaratas",
+      "iconClass": "fab fa-linkedin-in"
+    }
+  ]
+}
