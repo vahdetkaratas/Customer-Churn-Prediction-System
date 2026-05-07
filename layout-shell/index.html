@@ -134,7 +134,7 @@
 <a class="btn btn-ghost" href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI</a>
 <a class="btn btn-ghost" href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">CV / profile</a>
                       </div>
-                      <p class="hero-note">This page is static. The interactive scoring form runs on the API host (<strong>Live demo</strong>)—same origin as <code>POST /predict</code>, no Swagger required.</p>
+                      <p class="hero-note">This host is narrative-only. The full scorer UI (Vercel-style shell + form) opens via <strong>Live demo</strong> on churn-api.</p>
                       <div class="metrics" aria-label="Project facts">
                         <div><span>Python</span></div>
 <div><span>scikit-learn</span></div>
@@ -149,117 +149,20 @@
 <li>The published Docker image is inference-only: you mount a trained joblib artifact plus metric files from the training pipeline (see README).</li>
 <li>Risk bands do not encode business cost matrices or uplift models.</li></ul></div></section>
 
-                    <section class="proj-section" aria-labelledby="overview-heading">
-  <h2 id="overview-heading">Overview</h2>
-  <div class="proj-prose">
-    <p>
-      Binary churn scoring on tabular customer attributes: a fitted sklearn <strong>Pipeline</strong>
-      (column preprocessing + classifier) loaded at inference time. Training selects among logistic regression,
-      random forest, and gradient boosting using hold-out <strong>ROC-AUC</strong>, then exports metrics,
-      threshold tables, and a single <strong>joblib</strong> artifact so encoding and imputation match serving.
-    </p>
-    <p>
-      The running service exposes <strong>POST /predict</strong> with a JSON body aligned to the training schema.
-      The response includes a scalar <strong>churn probability</strong>, a thresholded <strong>Yes/No</strong> label,
-      fixed-cutoff <strong>risk bands</strong> for triage, and the <strong>threshold</strong> applied from disk when present.
-    </p>
-  </div>
-</section>
-
-<section class="proj-section" aria-labelledby="workflow-heading">
-  <h2 id="workflow-heading">Workflow</h2>
-  <p class="proj-section-intro">Offline training vs online inference:</p>
-  <ol class="proj-steps">
-    <li class="proj-step">
-      <span class="proj-step-num">1</span>
-      <div class="proj-step-body">
-        <h3 class="proj-step-title">Train (host / CI)</h3>
-        <p>
-          Load CSV → feature helpers (e.g. tenure buckets, active-service counts, numeric TotalCharges) → stratified split →
-          fit preprocessor + candidate models → pick best ROC-AUC → write <code>churn_model.joblib</code>,
-          <code>metrics.json</code>, threshold CSV/JSON, and optional error-analysis exports.
-        </p>
-      </div>
-    </li>
-    <li class="proj-step">
-      <span class="proj-step-num">2</span>
-      <div class="proj-step-body">
-        <h3 class="proj-step-title">Serve</h3>
-        <p>
-          <code>uvicorn src.api.app:app</code> or Docker with volumes for the model and <code>reports/metrics/</code>.
-          No training inside the inference container.
-        </p>
-      </div>
-    </li>
-    <li class="proj-step">
-      <span class="proj-step-num">3</span>
-      <div class="proj-step-body">
-        <h3 class="proj-step-title">Score</h3>
-        <p>
-          Client sends one record as JSON; service mirrors training feature steps, runs <code>predict_proba</code>,
-          applies the stored threshold for the label, and maps probability to band text.
-        </p>
-      </div>
-    </li>
-  </ol>
-</section>
-
-<section class="proj-section" aria-labelledby="features-heading">
-  <h2 id="features-heading">Features</h2>
-  <div class="proj-card-grid">
-    <div class="proj-card">
-      <h3 class="proj-card-title">Single pipeline artifact</h3>
-      <p>Preprocessor and model serialized together—reduces train/serve skew on encodings and imputation.</p>
-    </div>
-    <div class="proj-card">
-      <h3 class="proj-card-title">FastAPI + OpenAPI</h3>
-      <p>Browser demo at <code>GET /</code>; contract review at <code>/docs</code> and <code>/redoc</code>; <code>GET /health</code> for ops.</p>
-    </div>
-    <div class="proj-card">
-      <h3 class="proj-card-title">CLI parity</h3>
-      <p>Optional <code>python -m src.cli.predict</code> for stdin/file JSON using the same inference path as the API.</p>
-    </div>
-    <div class="proj-card">
-      <h3 class="proj-card-title">Threshold + bands</h3>
-      <p>F1-guided threshold persisted from training outputs; separate probability bands for coarse routing in demos.</p>
-    </div>
-  </div>
-</section>
-
-<section class="proj-section" aria-labelledby="stack-heading">
-  <h2 id="stack-heading">Tech stack</h2>
-  <div class="proj-prose">
-    <ul>
-      <li><strong>Core:</strong> Python, pandas, NumPy, scikit-learn, joblib, PyYAML</li>
-      <li><strong>Serving:</strong> FastAPI, Pydantic, uvicorn</li>
-      <li><strong>Quality:</strong> pytest (API, preprocessing, CLI, config)</li>
-      <li><strong>Packaging:</strong> Docker image running uvicorn; compose bind-mounts model + metrics</li>
-    </ul>
-  </div>
-</section>
-
-<section class="proj-section" aria-labelledby="deploy-heading">
-  <h2 id="deploy-heading">Deployment / live interface</h2>
-  <div class="proj-prose">
-    <p>
-      Live stack: <strong>https://churn-api.vahdetkaratas.com/</strong> serves the HTML demo and <code>POST /predict</code> on the same host.
-      Optional OpenAPI: <a href="https://churn-api.vahdetkaratas.com/docs">/docs</a>. Machine-readable banner: <a href="https://churn-api.vahdetkaratas.com/meta">/meta</a>.
-    </p>
-    <p>
-      This static site (e.g. <strong>churn.vahdetkaratas.com</strong> vs <strong>churn.vahdetlabs.com</strong>) is informational framing only unless you add client-side calls to the API; browsers may be blocked by CORS unless the API allows your origin.
-    </p>
-  </div>
-</section>
-
-<section class="proj-section" aria-labelledby="why-heading">
-  <h2 id="why-heading">Why this project</h2>
-  <div class="proj-prose">
-    <p>
-      It demonstrates the usual production-minded checkpoints—reproducible training script, compared models,
-      explicit metrics artifacts, inference-only container, and tests around the API boundary—without layering a separate dashboard framework on top.
-    </p>
-  </div>
-</section>
+                    <section class="proj-section" aria-labelledby="deep-heading">
+                      <h2 id="deep-heading">Hands-on demo &amp; depth</h2>
+                      <div class="proj-prose">
+                        <p>
+                          The full interactive page (jump nav, hold-out metrics when available, key findings, chart placeholder, predict form) is served at
+                          <strong><a href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">churn-api</a></strong>
+                          — same UI kit as the legacy Vercel bundle, without duplicating it here.
+                        </p>
+                        <p>
+                          <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer">GitHub</a>
+                          has training code, notebooks, and Docker layout.
+                        </p>
+                      </div>
+                    </section>
 
                   </div>
 

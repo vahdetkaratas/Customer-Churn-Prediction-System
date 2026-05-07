@@ -16,7 +16,9 @@ The file stays on your machine; only git tracking is removed.
 
 ## Demo bundle (optional)
 
-Deployed inference serves an HTML demo at **`GET /`** (same origin as `POST /predict`). For automation only, **`GET /meta`** returns the small JSON descriptor (`message`, `docs`, `demo`).
+The **`GET /`** page is the **Vercel-style demo** (`src/api/static/index.html`, `/static/layout-shell.css`, `churn-demo.css`, `favicon.svg`). **`GET /meta`** fills hold-out metrics (reads `reports/metrics/metrics.json`) plus repo links.
+
+For the comparison chart on that page, copy `reports/figures/model_comparison.png` → **`src/api/static/model_comparison.png`** on the server (often gitignored).
 
 ## Docker
 
