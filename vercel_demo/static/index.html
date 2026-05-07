@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Live churn prediction demo — FastAPI + scikit-learn, IBM Telco Customer Churn.">
+  <meta name="theme-color" content="#1a1a1f">
+  <meta property="og:title" content="Churn Prediction — Live Demo">
+  <meta property="og:description" content="Inference API for a trained churn model. Portfolio demo.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <title>Churn Prediction — Portfolio Demo</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Poppins:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="/static/layout-shell.css">
+  <link rel="stylesheet" href="/static/churn-demo.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="shell-outer">
+    <div class="shell-card">
+      <div class="art-info-bar">
+        <div class="art-info-bar-frame">
+          <div class="art-info-bar-header">
+            <button type="button" class="art-info-bar-btn" aria-label="Toggle info" aria-expanded="false">
+              <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="art-header">
+            <div class="art-avatar">
+              <a href="https://vahdetkaratas.com/img/face-1.jpg" class="art-avatar-curtain" target="_blank" rel="noopener noreferrer">
+                <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="Vahdet Karataş" width="90" height="90">
+                <i class="fas fa-expand" aria-hidden="true"></i>
+              </a>
+              <div class="art-lamp-light">
+                <div class="art-available-lamp"></div>
+              </div>
+            </div>
+            <h5 class="art-name mb-10"><a href="https://vahdetkaratas.com/">Vahdet Karataş</a></h5>
+            <div class="art-sm-text">Data &amp; Reporting Consultant</div>
+            <div class="art-sm-text art-muted mb-10">Available for 1–2 projects / month</div>
+          </div>
+
+          <div id="scrollbar2" class="art-scroll-frame">
+            <div class="art-table p-15-15">
+              <ul>
+                <li><h6>Location:</h6><span>Prague, Czech Republic</span></li>
+              </ul>
+            </div>
+
+            <div class="art-ls-divider"></div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Tools &amp; Focus Areas</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Dashboards &amp; reporting</li>
+                <li>Data cleaning &amp; analysis</li>
+                <li>Reporting workflows</li>
+                <li>Data pipelines &amp; ETL</li>
+                <li>ML training → serving patterns</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">How I can help</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Client work: dashboards, reports, automation</li>
+                <li>Applied ML &amp; interactive apps — <a href="https://vahdetkaratas.com/">see main site</a></li>
+                <li>Data cleaning &amp; trustworthy spreadsheets</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Recent outcomes</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Reporting deliverables folded into recurring review cycles</li>
+                <li>Automated prep cut manual steps for repeat exports</li>
+                <li>Notebook experiments packaged as lightweight APIs for stakeholders</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <p class="churn-demo-note">This page is a <strong>live churn prediction demo</strong> (IBM Telco public dataset). Inference API only — training lives in the GitHub repo.</p>
+            </div>
+          </div>
+
+          <div class="art-ls-social">
+            <a href="https://github.com/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://linkedin.com/in/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://www.facebook.com/vakasoft/" target="_blank" rel="noopener noreferrer" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="shell-main-wrap" id="shellMainWrap">
+        <div class="shell-mobile-curtain" id="shellMobileCurtain" aria-hidden="true"></div>
+        <div class="shell-main">
+          <main class="shell-scroll" id="main" tabindex="-1">
+            <div class="shell-content" id="projectContent">
+              <h1 class="page-title">Churn prediction demo</h1>
+              <p class="page-lead">IBM Telco Customer Churn — trained pipeline, F1-tuned threshold at inference. Try the form below or open <a href="/docs">/docs</a> for the JSON schema.</p>
+
+              <nav class="demo-jump-nav" aria-label="On this page">
+                <a href="#main">Top</a>
+                <a href="#section-about">About</a>
+                <a href="#metricsCard">Metrics</a>
+                <a href="#section-findings">Key findings</a>
+                <a href="#section-limits">Limitations</a>
+                <a href="#section-predict">Try predict</a>
+                <a href="/docs" target="_blank" rel="noopener">OpenAPI</a>
+                <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
+              </nav>
+
+              <section class="art-card about-block" id="section-about">
+                <h2 class="art-section-title">About this project</h2>
+                <p><strong>What it does.</strong> Contract, tenure, charges, and service flags → churn probability, binary label (F1-tuned threshold), and a risk band.</p>
+                <p><strong>How it was built.</strong> Python: feature engineering, LogReg / Random Forest / Gradient Boosting, best by ROC-AUC. <em>Inference-only</em> deploy — <code>model/churn_model.joblib</code>.</p>
+                <ul>
+                  <li><a href="/meta">GET /meta</a> — stack &amp; training summary</li>
+                  <li><a href="/health">GET /health</a> — model file check</li>
+                </ul>
+              </section>
+
+              <section class="art-card about-block" id="metricsCard">
+                <h2 class="art-section-title">Hold-out test metrics</h2>
+                <p class="metrics-note" style="margin-top:0;">Best model by test ROC-AUC. F1 @ 0.5; live API uses F1-tuned threshold.</p>
+                <div class="metrics-grid" id="metricsGrid"></div>
+                <p class="metrics-note" id="metricsModelLine"></p>
+              </section>
+
+              <section class="art-card about-block" id="section-findings">
+                <h2 class="art-section-title">Key findings</h2>
+                <p style="color:var(--text-muted);font-size:0.86rem;margin:0 0 0.85rem;">From EDA and modeling — notebooks in the repo.</p>
+                <ul class="findings-list">
+                  <li><strong>Class balance.</strong> ~27% churn; stratified split.</li>
+                  <li><strong>Who churns.</strong> Month-to-month and shorter tenure dominate.</li>
+                  <li><strong>Models.</strong> Three compared; API serves ROC-AUC winner.</li>
+                  <li><strong>Threshold.</strong> F1-tuned on the test set — not fixed 0.5.</li>
+                </ul>
+                <figure class="findings-fig">
+                  <img id="figCompare" src="/model_comparison.png" alt="ROC-AUC and F1 by model (hold-out)" width="680" height="320" loading="lazy"
+                    onerror="this.style.display='none'; document.getElementById('figMissing').style.display='block';">
+                  <div id="figMissing" class="fig-missing" role="note">
+                    Chart missing. Run <code>python scripts/generate_figures.py</code>, copy
+                    <code>reports/figures/model_comparison.png</code> → <code>vercel_demo/public/model_comparison.png</code>.
+                  </div>
+                  <figcaption>Hold-out ROC-AUC and F1 (notebooks/03_model_experiments).</figcaption>
+                </figure>
+                <p class="notebooks-cta">
+                  <a id="nbLink" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/tree/main/notebooks" target="_blank" rel="noopener">Notebooks on GitHub</a>
+                  — 01 EDA, 02 features, 03 models, 04 threshold.
+                </p>
+              </section>
+
+              <section class="art-card about-block" id="section-limits">
+                <h2 class="art-section-title">Limitations</h2>
+                <ul class="limitations-list">
+                  <li><strong>Dataset.</strong> Public teaching data — not production distribution.</li>
+                  <li><strong>Churn definition.</strong> Snapshot label; real goals may need different cutoffs.</li>
+                  <li><strong>Ops.</strong> No retraining, drift, or monitoring in this demo.</li>
+                </ul>
+              </section>
+
+              <section class="art-card" id="section-repo">
+                <div class="cta-wrap">
+                  <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    Full pipeline &amp; notebooks
+                  </a>
+                  <p class="cta-sub">Training code, EDA, model comparison, threshold analysis, and FastAPI source.</p>
+                </div>
+              </section>
+
+              <section class="art-card" id="section-predict">
+                <h2 class="art-section-title">Customer profile</h2>
+                <div class="row">
+                  <div>
+                    <label for="tenure">Tenure (months)</label>
+                    <input type="number" id="tenure" min="0" value="12">
+                  </div>
+                  <div>
+                    <label for="Contract">Contract</label>
+                    <select id="Contract">
+                      <option value="Month-to-month">Month-to-month</option>
+                      <option value="One year">One year</option>
+                      <option value="Two year">Two year</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="MonthlyCharges">Monthly charges ($)</label>
+                    <input type="number" id="MonthlyCharges" step="0.01" value="79.85">
+                  </div>
+                  <div>
+                    <label for="TotalCharges">Total charges ($)</label>
+                    <input type="number" id="TotalCharges" step="0.01" value="965.4">
+                  </div>
+                  <div>
+                    <label for="InternetService">Internet service</label>
+                    <select id="InternetService">
+                      <option value="Fiber optic">Fiber optic</option>
+                      <option value="DSL">DSL</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="Partner">Partner</label>
+                    <select id="Partner">
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="btns">
+                  <button type="button" class="primary" id="btnPredict">Predict churn</button>
+                  <button type="button" class="secondary" id="btnSample">Load sample</button>
+                </div>
+                <div id="error"></div>
+                <div id="result">
+                  <h2 class="art-section-title">Prediction</h2>
+                  <div class="result-grid">
+                    <div class="result-item">
+                      <div class="label">Churn probability</div>
+                      <div class="value" id="outProb">—</div>
+                    </div>
+                    <div class="result-item">
+                      <div class="label">Prediction</div>
+                      <div class="value" id="outPred">—</div>
+                    </div>
+                    <div class="result-item" id="outRiskWrap">
+                      <div class="label">Risk band</div>
+                      <div class="value" id="outRisk">—</div>
+                    </div>
+                    <div class="result-item">
+                      <div class="label">Threshold used</div>
+                      <div class="value" id="outThresh">—</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="container-fluid p-30-0">
+              <footer class="footer">
+                <div class="art-copy">
+                  FastAPI + scikit-learn · IBM Telco · <a href="/docs">OpenAPI</a>
+                  · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
+                </div>
+                <div class="footer-developer">Churn prediction demo · © <span id="shellYear"></span></div>
+              </footer>
+            </div>
+          </main>
+        </div>
+
+        <aside class="shell-rail" aria-label="Portfolio home">
+          <div class="shell-rail-header">
+            <a class="shell-rail-home" href="https://vahdetkaratas.com/" title="Portfolio home" aria-label="Portfolio home">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+              </svg>
+            </a>
+          </div>
+          <div class="shell-rail-spacer" aria-hidden="true"></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('shellYear').textContent = new Date().getFullYear();
+
+    (function () {
+      var btn = document.querySelector('.art-info-bar-btn');
+      var bar = document.querySelector('.art-info-bar');
+      var curtain = document.getElementById('shellMobileCurtain');
+      if (!btn || !bar) return;
+      function setOpen(open) {
+        bar.classList.toggle('art-active', open);
+        btn.classList.toggle('art-active', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (curtain) {
+          curtain.classList.toggle('is-open', open);
+          curtain.setAttribute('aria-hidden', open ? 'false' : 'true');
+        }
+      }
+      btn.addEventListener('click', function () {
+        setOpen(!bar.classList.contains('art-active'));
+      });
+      if (curtain) {
+        curtain.addEventListener('click', function () {
+          setOpen(false);
+        });
+      }
+    })();
+
+    (function () {
+      var mainEl = document.getElementById('main');
+      document.querySelectorAll('.demo-jump-nav a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var href = a.getAttribute('href');
+          if (!href || href.length < 2) return;
+          e.preventDefault();
+          if (href === '#main') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (mainEl) mainEl.focus({ preventScroll: true });
+            return;
+          }
+          var el = document.querySelector(href);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    })();
+
+    (function () {
+      fetch('/meta').then(function (r) { return r.ok ? r.json() : null; }).then(function (m) {
+        var t = m && m.test_metrics;
+        if (!t) return;
+        var card = document.getElementById('metricsCard');
+        var grid = document.getElementById('metricsGrid');
+        var line = document.getElementById('metricsModelLine');
+        if (!card || !grid) return;
+        grid.innerHTML =
+          '<div class="m"><div class="k">ROC-AUC</div><div class="v">' + t.roc_auc + '</div></div>' +
+          '<div class="m"><div class="k">F1 @ 0.5 cutoff</div><div class="v">' + t.f1 + '</div></div>';
+        line.textContent = 'Deployed model: ' + t.model_name + ' · ' + (t.test_set || '');
+        card.classList.add('is-visible');
+      }).catch(function () {});
+    })();
+
+    function formatApiError(data) {
+      if (!data || data.detail == null) return 'Request failed';
+      const d = data.detail;
+      if (typeof d === 'string') return d;
+      if (Array.isArray(d)) {
+        return d.map(function (x) {
+          if (x && typeof x.msg === 'string') return x.msg;
+          return JSON.stringify(x);
+        }).join(' · ');
+      }
+      return String(d);
+    }
+
+    const defaultPayload = {
+      gender: "Female", SeniorCitizen: 0, Partner: "Yes", Dependents: "No",
+      tenure: 12, PhoneService: "Yes", MultipleLines: "No", InternetService: "Fiber optic",
+      OnlineSecurity: "No", OnlineBackup: "Yes", DeviceProtection: "No", TechSupport: "No",
+      StreamingTV: "Yes", StreamingMovies: "No", Contract: "Month-to-month",
+      PaperlessBilling: "Yes", PaymentMethod: "Electronic check",
+      MonthlyCharges: 79.85, TotalCharges: 965.4
+    };
+
+    function getPayload() {
+      return {
+        ...defaultPayload,
+        tenure: parseInt(document.getElementById('tenure').value, 10) || 0,
+        Contract: document.getElementById('Contract').value,
+        MonthlyCharges: parseFloat(document.getElementById('MonthlyCharges').value) || 0,
+        TotalCharges: parseFloat(document.getElementById('TotalCharges').value) || 0,
+        InternetService: document.getElementById('InternetService').value,
+        Partner: document.getElementById('Partner').value
+      };
+    }
+
+    function setPayload(p) {
+      document.getElementById('tenure').value = p.tenure;
+      document.getElementById('Contract').value = p.Contract;
+      document.getElementById('MonthlyCharges').value = p.MonthlyCharges;
+      document.getElementById('TotalCharges').value = p.TotalCharges;
+      document.getElementById('InternetService').value = p.InternetService;
+      document.getElementById('Partner').value = p.Partner;
+    }
+
+    const resultEl = document.getElementById('result');
+    const errorEl = document.getElementById('error');
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('visible');
+      resultEl.classList.remove('visible');
+    }
+    function clearError() {
+      errorEl.textContent = '';
+      errorEl.classList.remove('visible');
+    }
+
+    document.getElementById('btnSample').addEventListener('click', function () {
+      setPayload(defaultPayload);
+      clearError();
+      resultEl.classList.remove('visible');
+    });
+
+    document.getElementById('btnPredict').addEventListener('click', async function () {
+      clearError();
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Predicting…';
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getPayload())
+        });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok) throw new Error(formatApiError(data) || res.statusText);
+        document.getElementById('outProb').textContent = (data.churn_probability * 100).toFixed(1) + '%';
+        document.getElementById('outPred').textContent = data.prediction === 'Yes' ? 'Churn' : 'No churn';
+        document.getElementById('outRisk').textContent = data.risk_band;
+        document.getElementById('outThresh').textContent = data.threshold_used;
+        const wrap = document.getElementById('outRiskWrap');
+        wrap.className = 'result-item risk-' + data.risk_band;
+        resultEl.classList.add('visible');
+      } catch (e) {
+        showError(e.message || 'Request failed. Is the API running?');
+      }
+      btn.disabled = false;
+      btn.textContent = 'Predict churn';
+    });
+  </script>
+</body>
+</html>

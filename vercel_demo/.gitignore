@@ -1,0 +1,5 @@
+# Optional copies from local training — not required when demo calls remote churn-api
+public/model_comparison.png
+*.joblib
+metrics.json
+threshold_summary.json

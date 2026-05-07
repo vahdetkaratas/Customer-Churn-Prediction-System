@@ -3,7 +3,7 @@
 [![CI](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/actions/workflows/ci.yml/badge.svg)](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System/actions/workflows/ci.yml)
 
 **Repository:** [Customer-Churn-Prediction-System](https://github.com/vahdetkaratas/Customer-Churn-Prediction-System)  
-**Live:** scoring API [churn-api.vahdetkaratas.com](https://churn-api.vahdetkaratas.com/) · OpenAPI [/docs](https://churn-api.vahdetkaratas.com/docs). Portfolio/labs framing pages are static shells (`layout-shell`, `layout-shell-commercial`) deployed separately from this repo if used.
+**Live:** interactive demo + API [churn-api.vahdetkaratas.com](https://churn-api.vahdetkaratas.com/) · JSON probe [/meta](https://churn-api.vahdetkaratas.com/meta) · OpenAPI [/docs](https://churn-api.vahdetkaratas.com/docs). Portfolio/labs framing (`layout-shell` folders) are optional static sites.
 
 Production-style **tabular ML** pipeline: preprocessing, engineered features, LogReg / Random Forest / Gradient Boosting (best by ROC-AUC), F1-tuned threshold, error analysis, **FastAPI** + optional CLI. Stack: scikit-learn, pandas, FastAPI.
 
@@ -19,7 +19,7 @@ Raw CSV → features → train/test split → compare models → best → joblib
 
 - One-command training → model artifact + metrics + threshold tables.
 - Single **joblib** pipeline (no train/serve skew on encodings).
-- **REST API** — probability, `Yes`/`No`, risk bands.
+- **REST API** — browser demo at `GET /`, `POST /predict` (probability, `Yes`/`No`, risk bands), `GET /meta` for probes.
 - **pytest** — API, preprocessing, CLI, config (skips when data/model missing).
 
 ## Docker (API for clone users)

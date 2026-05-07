@@ -66,8 +66,9 @@
               <ul class="art-knowledge-list p-15-0">
                 <li><a href="https://vahdetlabs.com/contact" target="_blank" rel="noopener noreferrer">Discuss use case</a></li>
 <li><a href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs home</a></li>
-<li><a href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open scoring demo (API)</a></li>
-<li><a href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI docs</a></li>
+<li><a href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Live demo (browser UI)</a></li>
+<li><a href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI (/docs)</a></li>
+<li><a href="https://churn-api.vahdetkaratas.com/meta" target="_blank" rel="noopener noreferrer">/meta (JSON)</a></li>
               </ul>
             </div>
 
@@ -115,10 +116,10 @@
                   <header>
                     <div class="logo" id="top">Retention <span>risk scoring</span></div>
                     <div class="nav-actions">
-                      <a class="btn btn-primary" href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open scoring demo (API)</a>
+                      <a class="btn btn-primary" href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Live demo</a>
 <a class="btn btn-ghost" href="https://vahdetlabs.com/contact" target="_blank" rel="noopener noreferrer">Discuss use case</a>
 <a class="btn btn-ghost" href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs</a>
-<a class="btn btn-ghost" href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI docs</a>
+<a class="btn btn-ghost" href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI</a>
                     </div>
                   </header>
 
@@ -128,12 +129,12 @@
                       <h1>Customer churn risk scoring</h1>
                       <p class="hero-lead">Score individual accounts from structured fields (Telco-style schema): JSON in, churn probability plus coarse risk tier out—suited to trials where teams want ranked follow-up, not a replacement for CRM strategy.</p>
                       <div class="hero-cta">
-                        <a class="btn btn-primary" href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open scoring demo (API)</a>
+                        <a class="btn btn-primary" href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Live demo</a>
 <a class="btn btn-ghost" href="https://vahdetlabs.com/contact" target="_blank" rel="noopener noreferrer">Discuss use case</a>
 <a class="btn btn-ghost" href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs</a>
-<a class="btn btn-ghost" href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI docs</a>
+<a class="btn btn-ghost" href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI</a>
                       </div>
-                      <p class="hero-note">Public reference deployment for evaluation. Production fit depends on your data contract, volume, and governance—not demonstrated on this page.</p>
+                      <p class="hero-note">Try the hosted form on <strong>Live demo</strong> (same host as the scorer—no Swagger needed). Production fit still depends on your data contract, volume, and governance.</p>
                       <div class="metrics" aria-label="Project facts">
                         <div><span>Python</span></div>
 <div><span>scikit-learn</span></div>
@@ -212,7 +213,7 @@
     </div>
     <div class="proj-card">
       <h3 class="proj-card-title">FastAPI + OpenAPI</h3>
-      <p><code>/docs</code> and <code>/redoc</code> for contract review; health endpoint for ops checks.</p>
+      <p>Browser demo at <code>GET /</code>; optional contract UI at <code>/docs</code> and <code>/redoc</code>; <code>GET /health</code> for ops.</p>
     </div>
     <div class="proj-card">
       <h3 class="proj-card-title">CLI parity</h3>
@@ -241,8 +242,8 @@
   <h2 id="deploy-heading">Deployment / live interface</h2>
   <div class="proj-prose">
     <p>
-      Canonical scoring URL for integration checks: <strong>https://churn-api.vahdetkaratas.com/</strong>
-      (OpenAPI at <code>/docs</code>). There is no in-repo dashboard UI; interaction is HTTP API–first (try-it flows via OpenAPI or curl).
+      Live scoring UI: <strong>https://churn-api.vahdetkaratas.com/</strong> (HTML form + <code>POST /predict</code> same origin).
+      Optional: <a href="https://churn-api.vahdetkaratas.com/docs">OpenAPI</a>, <a href="https://churn-api.vahdetkaratas.com/meta">/meta</a>.
     </p>
     <p>
       This static site (e.g. <strong>churn.vahdetkaratas.com</strong> vs <strong>churn.vahdetlabs.com</strong>) is informational framing only unless you add client-side calls to the API; browsers may be blocked by CORS unless the API allows your origin.

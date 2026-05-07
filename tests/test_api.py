@@ -8,10 +8,19 @@ client = TestClient(app)
 
 
 def test_root():
-    """Root returns message."""
+    """Root serves HTML demo."""
     r = client.get("/")
     assert r.status_code == 200
-    assert "message" in r.json()
+    assert "text/html" in r.headers.get("content-type", "")
+    assert "Churn scoring demo" in r.text or "Customer churn scoring" in r.text
+
+
+def test_meta():
+    """Meta returns JSON for automation."""
+    r = client.get("/meta")
+    assert r.status_code == 200
+    assert r.json().get("message")
+    assert r.json().get("docs") == "/docs"
 
 
 def test_health():

@@ -14,9 +14,9 @@ git commit -m "Stop tracking Kaggle CSV"
 
 The file stays on your machine; only git tracking is removed.
 
-## Vercel demo bundle
+## Demo bundle (optional)
 
-After training, copy artifacts into `vercel_demo/` so the live demo matches your run. See [`vercel_demo/README.md`](vercel_demo/README.md) (model, `metrics.json`, `public/model_comparison.png`, etc.).
+Deployed inference serves an HTML demo at **`GET /`** (same origin as `POST /predict`). For automation only, **`GET /meta`** returns the small JSON descriptor (`message`, `docs`, `demo`).
 
 ## Docker
 

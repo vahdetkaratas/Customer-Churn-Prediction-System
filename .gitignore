@@ -26,4 +26,4 @@ data/raw/*.csv
 # Figure outputs — regenerate with scripts/generate_figures.py
 reports/figures/*.png
 docs/
-vercel_demo
+# Remote artifacts optionally copied into vercel_demo/public (see vercel_demo/.gitignore)

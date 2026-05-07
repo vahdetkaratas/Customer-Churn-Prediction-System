@@ -1,0 +1,9 @@
+# Model files (Vercel)
+
+| File | Source |
+|------|--------|
+| `churn_model.joblib` | After training, copy from `artifacts/models/churn_model.joblib`. **Commit this file** (or use Git LFS) so Vercel has the model; the copy under `artifacts/` stays gitignored. |
+| `threshold_summary.json` | Optional — copy from `reports/metrics/threshold_summary.json` for the same F1-tuned threshold as training. |
+| `metrics.json` | Copy from `reports/metrics/metrics.json` after training so the demo page can show hold-out ROC-AUC / F1 via `GET /meta`. |
+
+Without `churn_model.joblib`, `/predict` returns **503**.
