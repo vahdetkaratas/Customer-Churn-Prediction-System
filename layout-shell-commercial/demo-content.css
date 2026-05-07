@@ -996,12 +996,16 @@
 }
 
 /* Sidebar link rows */
-.art-info-bar .art-knowledge-list li a {
+.art-info-bar .art-knowledge-list li > a {
   color: var(--text-1);
   text-decoration: none;
   border-bottom: 1px solid rgba(255, 193, 7, 0.28);
 }
-.art-info-bar .art-knowledge-list li a:hover {
+.art-info-bar .art-knowledge-list li > a:link,
+.art-info-bar .art-knowledge-list li > a:visited {
+  color: var(--text-1);
+}
+.art-info-bar .art-knowledge-list li > a:hover {
   color: var(--main-color);
   border-bottom-color: var(--main-color);
 }
