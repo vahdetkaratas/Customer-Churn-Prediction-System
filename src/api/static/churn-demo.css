@@ -41,26 +41,10 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Host-aware shell chrome (matches layout-shell vs layout-shell-commercial sidebars) */
-html.api-host-recruiter .api-shell-pane--commercial {
-  display: none !important;
-}
-html.api-host-labs .api-shell-pane--recruiter {
-  display: none !important;
-}
-.art-info-bar .api-pane-scrollbar.art-scroll-frame {
-  width: 100%;
-  max-width: 100%;
-  height: calc(100vh - 30px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  box-sizing: border-box;
-  padding: 240px 0 50px;
-}
-/* Live API (dual shell): don't trap wheel/overscroll when list fits viewport */
-body.api-dual-shell.api-service-page .art-info-bar #scrollbar2.art-scroll-frame,
-body.api-dual-shell.api-service-page .art-info-bar .api-pane-scrollbar.art-scroll-frame {
+/* Host-aware rail + sidebar: server strips one sidebar variant; rail toggles via html.api-host-* */
+
+/* Sidebar scroll: don't trap wheel when list fits viewport */
+body.api-service-page .art-info-bar #scrollbar2.art-scroll-frame {
   overscroll-behavior-y: contain;
 }
 .shell-rail-header .rail-commercial {

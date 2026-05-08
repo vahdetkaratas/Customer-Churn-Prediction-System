@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.config_loader import load_config
@@ -15,6 +16,42 @@ from .service import predict_single_customer
 
 _STATIC = Path(__file__).resolve().parent / "static"
 _INDEX_HTML = _STATIC / "index.html"
+
+_SIDEBAR_RECRUITER_BEGIN = "<!-- API_SIDEBAR_VARIANT_RECRUITER -->"
+_SIDEBAR_RECRUITER_END = "<!-- /API_SIDEBAR_VARIANT_RECRUITER -->"
+_SIDEBAR_COMMERCIAL_BEGIN = "<!-- API_SIDEBAR_VARIANT_COMMERCIAL -->"
+_SIDEBAR_COMMERCIAL_END = "<!-- /API_SIDEBAR_VARIANT_COMMERCIAL -->"
+
+
+def _host_prefers_labs_sidebar(host: str) -> bool:
+    """churn-api.vahdetlabs.com (and other *vahdetlabs* API hosts) → commercial shell sidebar."""
+    if not host:
+        return False
+    hostname = host.split(":")[0].strip().lower()
+    return "vahdetlabs" in hostname
+
+
+def _demo_html_for_host(host: str) -> str:
+    raw = _INDEX_HTML.read_text(encoding="utf-8")
+    labs = _host_prefers_labs_sidebar(host)
+
+    def _strip_between(s: str, start: str, end: str) -> str:
+        i0 = s.find(start)
+        i1 = s.find(end)
+        if i0 == -1 or i1 == -1 or i1 < i0:
+            return s
+        return s[:i0] + s[i1 + len(end) :]
+
+    if labs:
+        raw = _strip_between(raw, _SIDEBAR_RECRUITER_BEGIN, _SIDEBAR_RECRUITER_END)
+    else:
+        raw = _strip_between(raw, _SIDEBAR_COMMERCIAL_BEGIN, _SIDEBAR_COMMERCIAL_END)
+
+    cls = "api-host-labs" if labs else "api-host-recruiter"
+    raw, n = re.subn(r'<html\s+lang="en"', f'<html lang="en" class="{cls}"', raw, count=1)
+    if n != 1:
+        raise RuntimeError("Demo template must contain exactly one <html lang=\"en\"> root.")
+    return raw
 
 GITHUB_REPO_URL = "https://github.com/vahdetkaratas/Customer-Churn-Prediction-System"
 
@@ -84,11 +121,12 @@ def model_comparison_chart():
 
 
 @app.get("/")
-def root():
-    """Serve neutral HTML demo (same origin as POST /predict)."""
+def root(request: Request):
+    """Demo UI — sidebar matches framing shell for Host (labs vs recruiter API hostname)."""
     if not _INDEX_HTML.is_file():
         raise HTTPException(status_code=500, detail="Demo UI missing on server.")
-    return FileResponse(_INDEX_HTML, media_type="text/html; charset=utf-8")
+    host = request.headers.get("host", "")
+    return HTMLResponse(_demo_html_for_host(host), media_type="text/html; charset=utf-8")
 
 
 @app.get("/health")

@@ -15,6 +15,26 @@ def test_root():
     assert "Customer Churn Scoring API" in r.text
 
 
+def test_root_sidebar_recruiter_host():
+    """Non-labs host keeps recruiter sidebar copy (strip commercial variant)."""
+    r = client.get("/", headers={"host": "churn-api.vahdetkaratas.com"})
+    assert r.status_code == 200
+    body = r.text
+    assert 'class="api-host-recruiter"' in body
+    assert "For hiring review" in body
+    assert "For client evaluation" not in body
+
+
+def test_root_sidebar_labs_host():
+    """*vahdetlabs* API host keeps commercial sidebar (same framing as churn.vahdetlabs.com)."""
+    r = client.get("/", headers={"host": "churn-api.vahdetlabs.com"})
+    assert r.status_code == 200
+    body = r.text
+    assert 'class="api-host-labs"' in body
+    assert "For client evaluation" in body
+    assert "For hiring review" not in body
+
+
 def test_meta():
     """Meta returns JSON for automation."""
     r = client.get("/meta")
