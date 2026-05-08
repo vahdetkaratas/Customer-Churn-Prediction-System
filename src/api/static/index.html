@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Customer Churn Scoring API — JSON POST /predict, OpenAPI /docs, health /health.">
   <meta name="theme-color" content="#1a1a1f">
+  <script>
+    (function () {
+      document.documentElement.classList.add(
+        /vahdetlabs/i.test(location.hostname || "") ? "api-host-labs" : "api-host-recruiter"
+      );
+    })();
+  </script>
   <title>Customer Churn Scoring API</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +21,7 @@
   <link rel="stylesheet" href="/static/layout-shell.css">
   <link rel="stylesheet" href="/static/churn-demo.css">
 </head>
-<body class="api-service-page">
+<body class="api-service-page api-dual-shell">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="shell-outer">
@@ -27,42 +34,149 @@
             </button>
           </div>
 
-          <div class="art-header api-service-sidebar-head">
-            <h5 class="art-name mb-10 api-service-sidebar-title">Customer Churn Scoring API</h5>
-            <div class="art-sm-text">JSON inference · <code class="api-inline-code">POST /predict</code></div>
+          <div class="api-shell-pane api-shell-pane--recruiter">
+            <div class="art-header">
+              <div class="art-avatar">
+                <a href="https://vahdetkaratas.com/" class="art-avatar-curtain">
+                  <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="Vahdettin Karatas" width="90" height="90">
+                  <i class="fas fa-expand" aria-hidden="true"></i>
+                </a>
+                <div class="art-lamp-light">
+                  <div class="art-available-lamp"></div>
+                </div>
+              </div>
+              <h5 class="art-name mb-10"><a href="https://vahdetkaratas.com/">Vahdettin Karatas</a></h5>
+              <div class="art-sm-text">Applied ML engineer — tabular models, APIs, inference deployment</div>
+            </div>
+
+            <div id="scrollbar2" class="art-scroll-frame api-pane-scrollbar">
+              <div class="art-table p-15-15">
+                <ul>
+                  <li><h6>Location:</h6><span>Prague, Czech Republic</span></li>
+                </ul>
+              </div>
+
+              <div class="art-ls-divider"></div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">Technical focus</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li>Tabular ML pipelines</li>
+                  <li>Train/serve parity with sklearn + joblib</li>
+                  <li>FastAPI services and OpenAPI contracts</li>
+                  <li>Docker inference packaging</li>
+                  <li>Tests around preprocessing and endpoints</li>
+                </ul>
+              </div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">For hiring review</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li><a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer">GitHub repository</a></li>
+                  <li><a href="/">Open scoring demo (API)</a></li>
+                  <li><a href="/docs">OpenAPI docs</a></li>
+                  <li><a href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">CV / profile</a></li>
+                </ul>
+              </div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">ML systems</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li><a href="https://vahdetkaratas.com/portfolio" target="_blank" rel="noopener noreferrer">Portfolio</a></li>
+                  <li><a href="https://batch-scoring.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Batch scoring</a></li>
+                  <li><a href="https://feature-store.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Feature store</a></li>
+                  <li><a href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs</a></li>
+                  <li><a href="https://monitoring.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Monitoring &amp; data quality</a></li>
+                  <li><a href="https://churn.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Customer churn prediction</a></li>
+                </ul>
+              </div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">Data tools</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li><a href="https://data-cleaning.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Data cleaning toolkit</a></li>
+                  <li><a href="https://eda-report.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">EDA report generator</a></li>
+                  <li><a href="https://forecasting.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Forecasting demo</a></li>
+                  <li><a href="https://ai-analysis.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">CSV analytics</a></li>
+                  <li><a href="https://kpi-dashboard.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">KPI dashboard</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
 
-          <div id="scrollbar2" class="art-scroll-frame">
-            <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">HTTP endpoints</h6>
-              <ul class="art-knowledge-list p-15-0">
-                <li><a href="#section-predict">POST /predict</a> · JSON body (<a href="/docs">schema</a>)</li>
-                <li><a href="/docs">GET /docs</a> (Swagger UI)</li>
-                <li><a href="/openapi.json">GET /openapi.json</a></li>
-                <li><a href="/health">GET /health</a></li>
-                <li><a href="/meta">GET /meta</a></li>
-              </ul>
+          <div class="api-shell-pane api-shell-pane--commercial">
+            <div class="art-header">
+              <div class="art-avatar">
+                <a href="https://vahdetlabs.com/" class="art-avatar-curtain">
+                  <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="Vahdettin Karatas" width="90" height="90">
+                  <i class="fas fa-expand" aria-hidden="true"></i>
+                </a>
+                <div class="art-lamp-light">
+                  <div class="art-available-lamp"></div>
+                </div>
+              </div>
+              <h5 class="art-name mb-10"><a href="https://vahdetlabs.com/">Vahdettin Karatas</a></h5>
+              <div class="art-sm-text">Freelance ML / data systems — pilots and internal tooling</div>
             </div>
 
-            <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">Stack</h6>
-              <ul class="art-knowledge-list p-15-0">
-                <li>FastAPI · OpenAPI</li>
-                <li>scikit-learn pipeline (joblib)</li>
-                <li>IBM Telco-style tabular schema</li>
-              </ul>
-            </div>
+            <div class="art-scroll-frame api-pane-scrollbar">
+              <div class="art-table p-15-15">
+                <ul>
+                  <li><h6>Location:</h6><span>Prague, Czech Republic</span></li>
+                </ul>
+              </div>
 
-            <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">Source</h6>
-              <ul class="art-knowledge-list p-15-0">
-                <li><a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer">GitHub repository</a></li>
-              </ul>
+              <div class="art-ls-divider"></div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">Technical focus</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li>Churn and retention analytics pilots</li>
+                  <li>JSON APIs for operational workflows</li>
+                  <li>Feature preprocessing contracts</li>
+                  <li>Deployment with clear data-handling boundaries</li>
+                  <li>Honest scoping—evaluation vs production hardening</li>
+                </ul>
+              </div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">For client evaluation</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li><a href="https://vahdetlabs.com/contact" target="_blank" rel="noopener noreferrer">Discuss use case</a></li>
+                  <li><a href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs home</a></li>
+                  <li><a href="/">Open scoring demo (API)</a></li>
+                  <li><a href="/docs">OpenAPI docs</a></li>
+                </ul>
+              </div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">ML systems</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li><a href="https://vahdetkaratas.com/portfolio" target="_blank" rel="noopener noreferrer">Portfolio</a></li>
+                  <li><a href="https://batch-scoring.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Batch scoring</a></li>
+                  <li><a href="https://feature-store.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Feature store</a></li>
+                  <li><a href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs</a></li>
+                  <li><a href="https://monitoring.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Monitoring &amp; data quality</a></li>
+                  <li><a href="https://churn.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Customer churn prediction</a></li>
+                </ul>
+              </div>
+
+              <div class="art-knowledge-block p-30-15">
+                <h6 class="mb-15">Data tools</h6>
+                <ul class="art-knowledge-list p-15-0">
+                  <li><a href="https://data-cleaning.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Data cleaning toolkit</a></li>
+                  <li><a href="https://eda-report.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">EDA report generator</a></li>
+                  <li><a href="https://forecasting.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Forecasting demo</a></li>
+                  <li><a href="https://ai-analysis.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">CSV analytics</a></li>
+                  <li><a href="https://kpi-dashboard.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">KPI dashboard</a></li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <div class="art-ls-social api-service-social">
-            <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer" title="GitHub repository" aria-label="GitHub repository"><i class="fab fa-github" aria-hidden="true"></i></a>
+          <div class="art-ls-social">
+            <a href="https://github.com/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+            <a href="https://linkedin.com/in/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>
@@ -221,8 +335,19 @@
           </main>
         </div>
 
-        <aside class="shell-rail" aria-hidden="true">
-          <div class="shell-rail-header shell-rail-header--inert"></div>
+        <aside class="shell-rail" aria-label="Home">
+          <div class="shell-rail-header">
+            <a class="shell-rail-home rail-recruiter" href="https://vahdetkaratas.com/" title="Portfolio home" aria-label="Portfolio home">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+              </svg>
+            </a>
+            <a class="shell-rail-home rail-commercial" href="https://vahdetlabs.com/" title="Vahdetlabs home" aria-label="Vahdetlabs home">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+              </svg>
+            </a>
+          </div>
           <div class="shell-rail-spacer" aria-hidden="true"></div>
         </aside>
       </div>

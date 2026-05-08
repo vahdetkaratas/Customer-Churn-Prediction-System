@@ -41,12 +41,36 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Live API UI — compact info bar without avatar rail */
-body.api-service-page .art-info-bar #scrollbar2.art-scroll-frame {
-  padding-top: 118px;
+/* Host-aware shell chrome (matches layout-shell vs layout-shell-commercial sidebars) */
+html.api-host-recruiter .api-shell-pane--commercial {
+  display: none !important;
 }
-body.api-service-page .api-service-sidebar-head .art-name {
-  line-height: 1.35;
+html.api-host-labs .api-shell-pane--recruiter {
+  display: none !important;
+}
+.art-info-bar .api-pane-scrollbar.art-scroll-frame {
+  width: 100%;
+  max-width: 100%;
+  height: calc(100vh - 30px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  padding: 240px 0 50px;
+}
+.shell-rail-header .rail-commercial {
+  display: none !important;
+}
+html.api-host-labs .shell-rail-header .rail-recruiter {
+  display: none !important;
+}
+html.api-host-labs .shell-rail-header .rail-commercial {
+  display: flex !important;
+}
+
+/* Live API UI — compact info bar without avatar rail */
+body.api-service-page:not(.api-dual-shell) .art-info-bar #scrollbar2.art-scroll-frame {
+  padding-top: 118px;
 }
 body.api-service-page .api-inline-code {
   font-family: var(--font-mono);
@@ -55,12 +79,6 @@ body.api-service-page .api-inline-code {
   padding: 0.1em 0.35em;
   border-radius: 3px;
   color: var(--text-1);
-}
-body.api-service-page .api-service-social {
-  justify-content: center;
-}
-body.api-service-page .shell-rail-header--inert {
-  pointer-events: none;
 }
 .about-repo-note {
   font-size: 0.88rem;
