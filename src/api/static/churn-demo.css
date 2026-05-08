@@ -58,6 +58,11 @@ html.api-host-labs .api-shell-pane--recruiter {
   box-sizing: border-box;
   padding: 240px 0 50px;
 }
+/* Live API (dual shell): don't trap wheel/overscroll when list fits viewport */
+body.api-dual-shell.api-service-page .art-info-bar #scrollbar2.art-scroll-frame,
+body.api-dual-shell.api-service-page .art-info-bar .api-pane-scrollbar.art-scroll-frame {
+  overscroll-behavior-y: contain;
+}
 .shell-rail-header .rail-commercial {
   display: none !important;
 }

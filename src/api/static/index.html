@@ -380,6 +380,25 @@
     })();
 
     (function () {
+      function fitApiSidebarScroll() {
+        if (!document.body.classList.contains('api-dual-shell')) return;
+        document.querySelectorAll('.api-shell-pane').forEach(function (pane) {
+          if (getComputedStyle(pane).display === 'none') return;
+          var scrollEl = pane.querySelector('#scrollbar2') || pane.querySelector('.api-pane-scrollbar.art-scroll-frame');
+          if (!scrollEl) return;
+          var needsScroll = scrollEl.scrollHeight > scrollEl.clientHeight + 8;
+          scrollEl.style.overflowY = needsScroll ? 'auto' : 'hidden';
+        });
+      }
+      window.addEventListener('resize', fitApiSidebarScroll);
+      window.addEventListener('load', fitApiSidebarScroll);
+      document.addEventListener('DOMContentLoaded', fitApiSidebarScroll);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(fitApiSidebarScroll);
+      });
+    })();
+
+    (function () {
       var mainEl = document.getElementById('main');
       document.querySelectorAll('.demo-jump-nav a[href^="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
