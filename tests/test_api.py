@@ -12,7 +12,7 @@ def test_root():
     r = client.get("/")
     assert r.status_code == 200
     assert "text/html" in r.headers.get("content-type", "")
-    assert "Churn prediction demo" in r.text
+    assert "Customer Churn Scoring API" in r.text
 
 
 def test_meta():

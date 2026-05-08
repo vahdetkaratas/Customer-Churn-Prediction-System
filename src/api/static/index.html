@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<!-- churn-api UI bundle: vercel-shell parity — redeploy image/commit after edits -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Live churn prediction demo — FastAPI + scikit-learn, IBM Telco Customer Churn.">
+  <meta name="description" content="Customer Churn Scoring API — JSON POST /predict, OpenAPI /docs, health /health.">
   <meta name="theme-color" content="#1a1a1f">
-  <title>Churn prediction — live demo</title>
+  <title>Customer Churn Scoring API</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +14,7 @@
   <link rel="stylesheet" href="/static/layout-shell.css">
   <link rel="stylesheet" href="/static/churn-demo.css">
 </head>
-<body>
+<body class="api-service-page">
   <a class="skip-link" href="#main">Skip to content</a>
 
   <div class="shell-outer">
@@ -28,79 +27,42 @@
             </button>
           </div>
 
-          <div class="art-header">
-            <div class="art-avatar">
-              <a href="https://vahdetkaratas.com/" class="art-avatar-curtain">
-                <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="Vahdettin Karatas" width="90" height="90">
-                <i class="fas fa-expand" aria-hidden="true"></i>
-              </a>
-              <div class="art-lamp-light">
-                <div class="art-available-lamp"></div>
-              </div>
-            </div>
-            <h5 class="art-name mb-10"><a href="https://vahdetkaratas.com/">Vahdettin Karatas</a></h5>
-            <div class="art-sm-text">Applied ML engineer — tabular models, APIs, inference deployment</div>
-
+          <div class="art-header api-service-sidebar-head">
+            <h5 class="art-name mb-10 api-service-sidebar-title">Customer Churn Scoring API</h5>
+            <div class="art-sm-text">JSON inference · <code class="api-inline-code">POST /predict</code></div>
           </div>
 
           <div id="scrollbar2" class="art-scroll-frame">
-            <div class="art-table p-15-15">
-              <ul>
-                <li><h6>Location:</h6><span>Prague, Czech Republic</span></li>
-              </ul>
-            </div>
-
-            <div class="art-ls-divider"></div>
-
             <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">Technical focus</h6>
+              <h6 class="mb-15">HTTP endpoints</h6>
               <ul class="art-knowledge-list p-15-0">
-                <li>Tabular ML pipelines</li>
-                <li>Train/serve parity with sklearn + joblib</li>
-                <li>FastAPI services and OpenAPI contracts</li>
-                <li>Docker inference packaging</li>
-                <li>Tests around preprocessing and endpoints</li>
+                <li><a href="#section-predict">POST /predict</a> · JSON body (<a href="/docs">schema</a>)</li>
+                <li><a href="/docs">GET /docs</a> (Swagger UI)</li>
+                <li><a href="/openapi.json">GET /openapi.json</a></li>
+                <li><a href="/health">GET /health</a></li>
+                <li><a href="/meta">GET /meta</a></li>
               </ul>
             </div>
 
             <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">For hiring review</h6>
+              <h6 class="mb-15">Stack</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>FastAPI · OpenAPI</li>
+                <li>scikit-learn pipeline (joblib)</li>
+                <li>IBM Telco-style tabular schema</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Source</h6>
               <ul class="art-knowledge-list p-15-0">
                 <li><a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer">GitHub repository</a></li>
-                <li><a href="https://churn-api.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open scoring demo (API)</a></li>
-                <li><a href="https://churn-api.vahdetkaratas.com/docs" target="_blank" rel="noopener noreferrer">OpenAPI docs</a></li>
-                <li><a href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">CV / profile</a></li>
               </ul>
             </div>
-
-            <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">ML systems</h6>
-              <ul class="art-knowledge-list p-15-0">
-                <li><a href="https://vahdetkaratas.com/portfolio" target="_blank" rel="noopener noreferrer">Portfolio</a></li>
-                <li><a href="https://batch-scoring.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Batch scoring</a></li>
-                <li><a href="https://feature-store.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Feature store</a></li>
-                <li><a href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs</a></li>
-                <li><a href="https://monitoring.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Monitoring &amp; data quality</a></li>
-                <li><a href="https://churn.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Customer churn prediction</a></li>
-              </ul>
-            </div>
-
-            <div class="art-knowledge-block p-30-15">
-              <h6 class="mb-15">Data tools</h6>
-              <ul class="art-knowledge-list p-15-0">
-                <li><a href="https://data-cleaning.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Data cleaning toolkit</a></li>
-                <li><a href="https://eda-report.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">EDA report generator</a></li>
-                <li><a href="https://forecasting.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Forecasting demo</a></li>
-                <li><a href="https://ai-analysis.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">CSV analytics</a></li>
-                <li><a href="https://kpi-dashboard.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">KPI dashboard</a></li>
-              </ul>
-            </div>
-
           </div>
 
-          <div class="art-ls-social">
-            <a href="https://github.com/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
-            <a href="https://linkedin.com/in/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          <div class="art-ls-social api-service-social">
+            <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer" title="GitHub repository" aria-label="GitHub repository"><i class="fab fa-github" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>
@@ -110,8 +72,8 @@
         <div class="shell-main">
           <main class="shell-scroll" id="main" tabindex="-1">
             <div class="shell-content" id="projectContent">
-              <h1 class="page-title">Churn prediction demo</h1>
-              <p class="page-lead">IBM Telco Customer Churn — trained pipeline, F1-tuned threshold at inference. Long-form positioning stays on <a href="https://churn.vahdetkaratas.com/">portfolio</a> / <a href="https://churn.vahdetlabs.com/">labs</a> hosts; <strong>this page is the interactive scorer</strong>. Schema: <a href="/docs">/docs</a>.</p>
+              <h1 class="page-title">Customer Churn Scoring API</h1>
+              <p class="page-lead">Single-record JSON scoring: churn probability, binary label (F1-tuned threshold from training export), and a coarse risk band. Request/response schema: <a href="/docs">/docs</a>. Interactive form below calls same-origin <code class="api-inline-code">POST /predict</code>.</p>
 
               <nav class="demo-jump-nav" aria-label="On this page">
                 <a href="#main">Top</a>
@@ -121,17 +83,20 @@
                 <a href="#section-limits">Limitations</a>
                 <a href="#section-predict">Try predict</a>
                 <a href="/docs" target="_blank" rel="noopener">OpenAPI</a>
-                <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
+                <a href="/openapi.json" target="_blank" rel="noopener">OpenAPI JSON</a>
+                <a href="/health" target="_blank" rel="noopener">Health</a>
               </nav>
 
               <section class="art-card about-block" id="section-about">
-                <h2 class="art-section-title">About this project</h2>
+                <h2 class="art-section-title">About this service</h2>
                 <p><strong>What it does.</strong> Contract, tenure, charges, and service flags → churn probability, binary label (F1-tuned threshold), and a risk band.</p>
-                <p><strong>How it was built.</strong> Python: feature engineering, LogReg / Random Forest / Gradient Boosting, best by ROC-AUC. <em>Inference-only</em> deploy — joblib pipeline + metrics from training.</p>
+                <p><strong>Implementation.</strong> Feature preprocessing and trained estimator in one sklearn pipeline; metrics/threshold read from training outputs at startup/inference.</p>
                 <ul>
-                  <li><a href="/meta">GET /meta</a> — stack &amp; training summary</li>
-                  <li><a href="/health">GET /health</a> — liveness</li>
+                  <li><a href="/meta">GET /meta</a> — optional hold-out metrics summary when configured</li>
+                  <li><a href="/health">GET /health</a> — liveness and model artifact presence</li>
+                  <li><a href="/openapi.json">GET /openapi.json</a> — machine-readable API contract</li>
                 </ul>
+                <p class="about-repo-note">Training code and notebooks: <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener noreferrer">Customer-Churn-Prediction-System</a> on GitHub.</p>
               </section>
 
               <section class="art-card about-block" id="metricsCard">
@@ -143,11 +108,11 @@
 
               <section class="art-card about-block" id="section-findings">
                 <h2 class="art-section-title">Key findings</h2>
-                <p style="color:var(--text-muted);font-size:0.86rem;margin:0 0 0.85rem;">From EDA and modeling — notebooks in the repo.</p>
+                <p style="color:var(--text-muted);font-size:0.86rem;margin:0 0 0.85rem;">From EDA and modeling — detail in repo notebooks.</p>
                 <ul class="findings-list">
                   <li><strong>Class balance.</strong> ~27% churn; stratified split.</li>
                   <li><strong>Who churns.</strong> Month-to-month and shorter tenure dominate.</li>
-                  <li><strong>Models.</strong> Three compared; API serves ROC-AUC winner.</li>
+                  <li><strong>Models.</strong> Multiple candidates compared; API serves ROC-AUC winner.</li>
                   <li><strong>Threshold.</strong> F1-tuned on the test set — not fixed 0.5.</li>
                 </ul>
                 <figure class="findings-fig">
@@ -170,18 +135,8 @@
                 <ul class="limitations-list">
                   <li><strong>Dataset.</strong> Public teaching data — not production distribution.</li>
                   <li><strong>Churn definition.</strong> Snapshot label; real goals may need different cutoffs.</li>
-                  <li><strong>Ops.</strong> No retraining, drift, or monitoring in this demo.</li>
+                  <li><strong>Ops.</strong> No retraining, drift, or monitoring in this deployment surface.</li>
                 </ul>
-              </section>
-
-              <section class="art-card" id="section-repo">
-                <div class="cta-wrap">
-                  <a class="cta-github" href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                    Full pipeline &amp; notebooks
-                  </a>
-                  <p class="cta-sub">Training code, EDA, model comparison, threshold analysis, and FastAPI source.</p>
-                </div>
               </section>
 
               <section class="art-card" id="section-predict">
@@ -255,23 +210,19 @@
             <div class="container-fluid p-30-0">
               <footer class="footer">
                 <div class="art-copy">
-                  FastAPI + scikit-learn · IBM Telco · <a href="/docs">OpenAPI</a>
+                  <a href="/docs">OpenAPI</a>
+                  · <a href="/openapi.json">openapi.json</a>
+                  · <a href="/health">Health</a>
                   · <a href="https://github.com/vahdetkaratas/Customer-Churn-Prediction-System" target="_blank" rel="noopener">GitHub</a>
                 </div>
-                <div class="footer-developer">Churn prediction demo · © <span id="shellYear"></span></div>
+                <div class="footer-developer">Customer Churn Scoring API</div>
               </footer>
             </div>
           </main>
         </div>
 
-        <aside class="shell-rail" aria-label="Portfolio home">
-          <div class="shell-rail-header">
-            <a class="shell-rail-home" href="https://vahdetkaratas.com/" title="Portfolio home" aria-label="Portfolio home">
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
-                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
-              </svg>
-            </a>
-          </div>
+        <aside class="shell-rail" aria-hidden="true">
+          <div class="shell-rail-header shell-rail-header--inert"></div>
           <div class="shell-rail-spacer" aria-hidden="true"></div>
         </aside>
       </div>
@@ -279,8 +230,6 @@
   </div>
 
   <script>
-    document.getElementById('shellYear').textContent = new Date().getFullYear();
-
     (function () {
       var btn = document.querySelector('.art-info-bar-btn');
       var bar = document.querySelector('.art-info-bar');

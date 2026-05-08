@@ -1,0 +1,5 @@
+{
+  "id": "customer-churn",
+  "body": "shell/body/customer-churn.html",
+  "profiles": ["recruiter", "commercial"]
+}

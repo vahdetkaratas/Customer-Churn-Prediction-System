@@ -41,6 +41,34 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
+/* Live API UI — compact info bar without avatar rail */
+body.api-service-page .art-info-bar #scrollbar2.art-scroll-frame {
+  padding-top: 118px;
+}
+body.api-service-page .api-service-sidebar-head .art-name {
+  line-height: 1.35;
+}
+body.api-service-page .api-inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  color: var(--text-1);
+}
+body.api-service-page .api-service-social {
+  justify-content: center;
+}
+body.api-service-page .shell-rail-header--inert {
+  pointer-events: none;
+}
+.about-repo-note {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  margin: 0.85rem 0 0;
+  line-height: 1.55;
+}
+
 /* Sidebar link rows — same as layout-shell demo-content.css (white labels; yellow underline / hover only) */
 .art-info-bar .art-knowledge-list li > a {
   color: var(--text-1);

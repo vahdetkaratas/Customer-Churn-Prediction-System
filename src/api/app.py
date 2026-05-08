@@ -50,7 +50,7 @@ app.mount("/static", StaticFiles(directory=str(_STATIC)), name="static")
 
 @app.get("/meta")
 def api_meta():
-    """Portfolio-style JSON + optional hold-out metrics for the demo UI."""
+    """JSON metadata + optional hold-out metrics for the demo UI."""
     out = {
         "message": "Customer Churn Prediction API",
         "docs": "/docs",
@@ -85,7 +85,7 @@ def model_comparison_chart():
 
 @app.get("/")
 def root():
-    """Browser demo (Vercel demo parity) — same origin as POST /predict."""
+    """Serve neutral HTML demo (same origin as POST /predict)."""
     if not _INDEX_HTML.is_file():
         raise HTTPException(status_code=500, detail="Demo UI missing on server.")
     return FileResponse(_INDEX_HTML, media_type="text/html; charset=utf-8")
